@@ -1,0 +1,31 @@
+{
+  "name": "prisma",
+  "description": "Prisma agent tooling for ORM, Client, Postgres, migrations, upgrades, and MCP workflows.",
+  "owner": {
+    "name": "Prisma"
+  },
+  "plugins": [
+    {
+      "name": "prisma",
+      "source": "./",
+      "description": "Prisma ORM, Prisma Client, Prisma Postgres, and migration guidance with official Prisma MCP integration.",
+      "version": "0.1.0",
+      "author": {
+        "name": "Prisma",
+        "url": "https://www.prisma.io/"
+      },
+      "repository": "https://github.com/prisma/prisma-plugin",
+      "license": "MIT",
+      "keywords": [
+        "prisma",
+        "orm",
+        "database",
+        "postgresql",
+        "migrations",
+        "prisma-client",
+        "prisma-postgres",
+        "mcp"
+      ]
+    }
+  ]
+}

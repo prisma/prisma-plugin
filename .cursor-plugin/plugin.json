@@ -1,0 +1,30 @@
+{
+  "name": "prisma",
+  "version": "0.1.0",
+  "description": "Prisma ORM, Prisma Client, Prisma Postgres, and migration guidance with official Prisma MCP integration.",
+  "author": {
+    "name": "Prisma",
+    "email": "support@prisma.io",
+    "url": "https://www.prisma.io/"
+  },
+  "homepage": "https://www.prisma.io/docs",
+  "repository": "https://github.com/prisma/prisma-plugin",
+  "license": "MIT",
+  "keywords": [
+    "prisma",
+    "orm",
+    "database",
+    "schema",
+    "migration",
+    "postgresql",
+    "mysql",
+    "sqlite",
+    "prisma-postgres",
+    "mcp"
+  ],
+  "logo": "assets/prisma-icon.svg",
+  "primaryColor": "#0C344B",
+  "skills": "skills",
+  "rules": "rules",
+  "mcp": ".mcp.json"
+}

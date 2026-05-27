@@ -1,0 +1,49 @@
+{
+  "name": "prisma",
+  "version": "0.1.0",
+  "description": "Prisma plugin with curated ORM skills plus official Prisma MCP server configuration.",
+  "author": {
+    "name": "Prisma",
+    "url": "https://www.prisma.io/"
+  },
+  "homepage": "https://www.prisma.io/docs",
+  "repository": "https://github.com/prisma/prisma-plugin",
+  "license": "MIT",
+  "keywords": [
+    "prisma",
+    "orm",
+    "database",
+    "postgresql",
+    "migrations",
+    "prisma-client",
+    "prisma-postgres",
+    "mcp"
+  ],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json",
+  "interface": {
+    "displayName": "Prisma",
+    "shortDescription": "Prisma ORM guidance with official MCP integration",
+    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres, and Prisma ORM v7 upgrades, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
+    "developerName": "Prisma",
+    "category": "Coding",
+    "capabilities": [
+      "Interactive",
+      "Write",
+      "MCP",
+      "Database"
+    ],
+    "websiteURL": "https://www.prisma.io/",
+    "privacyPolicyURL": "https://www.prisma.io/privacy",
+    "termsOfServiceURL": "https://www.prisma.io/terms",
+    "defaultPrompt": [
+      "Set up Prisma ORM in this project with the right adapter",
+      "Upgrade this app to Prisma ORM 7 and fix client imports",
+      "Use Prisma MCP to inspect my schema and plan a migration"
+    ],
+    "brandColor": "#0C344B",
+    "composerIcon": "./assets/prisma-icon.svg",
+    "logo": "./assets/prisma-icon.svg",
+    "screenshots": []
+  }
+}

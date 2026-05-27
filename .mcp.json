@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "prisma": {
+      "type": "http",
+      "url": "https://mcp.prisma.io/mcp",
+      "note": "Official remote Prisma MCP server for Prisma Postgres account and database workflows. It authenticates with Prisma Console on first use."
+    }
+  }
+}
