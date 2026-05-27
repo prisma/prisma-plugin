@@ -26,8 +26,6 @@ claude plugin install prisma@prisma --scope local
 | Cursor | `.cursor-plugin/plugin.json` |
 | Claude Code | `.claude-plugin/plugin.json` |
 
-Note: `plugins@1.3.1` detects Cursor on macOS, but its `--target cursor` installer currently writes through the Claude-style plugin cache instead of `~/.cursor/plugins`.
-
 ## Contents
 
 - `skills/` - canonical Prisma skills copied from the latest Codex plugin
