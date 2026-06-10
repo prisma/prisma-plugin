@@ -1,7 +1,7 @@
 {
   "name": "prisma",
-  "version": "0.1.0",
-  "description": "Prisma plugin with curated ORM skills plus official Prisma MCP server configuration.",
+  "version": "0.2.0",
+  "description": "Prisma plugin with curated ORM, Prisma Postgres, and Prisma Compute skills plus official Prisma MCP server configuration.",
   "author": {
     "name": "Prisma",
     "url": "https://www.prisma.io/"
@@ -17,21 +17,24 @@
     "migrations",
     "prisma-client",
     "prisma-postgres",
+    "prisma-compute",
+    "deployment",
     "mcp"
   ],
   "skills": "./skills/",
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Prisma",
-    "shortDescription": "Prisma ORM guidance with official MCP integration",
-    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres, and Prisma ORM v7 upgrades, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
+    "shortDescription": "Prisma ORM, Postgres, and Compute guidance with official MCP integration",
+    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres, Prisma Compute app deployment, and Prisma ORM v7 upgrades, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
     "developerName": "Prisma",
     "category": "Coding",
     "capabilities": [
       "Interactive",
       "Write",
       "MCP",
-      "Database"
+      "Database",
+      "Deployment"
     ],
     "websiteURL": "https://www.prisma.io/",
     "privacyPolicyURL": "https://www.prisma.io/privacy",
@@ -39,6 +42,7 @@
     "defaultPrompt": [
       "Set up Prisma ORM in this project with the right adapter",
       "Upgrade this app to Prisma ORM 7 and fix client imports",
+      "Deploy this app to Prisma Compute",
       "Use Prisma MCP to inspect my schema and plan a migration"
     ],
     "brandColor": "#0C344B",
