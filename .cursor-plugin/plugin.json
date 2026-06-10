@@ -1,7 +1,7 @@
 {
   "name": "prisma",
-  "version": "0.1.0",
-  "description": "Prisma ORM, Prisma Client, Prisma Postgres, and migration guidance with official Prisma MCP integration.",
+  "version": "0.2.0",
+  "description": "Prisma ORM, Prisma Client, Prisma Postgres, Prisma Compute, and migration guidance with official Prisma MCP integration.",
   "author": {
     "name": "Prisma",
     "email": "support@prisma.io",
@@ -20,6 +20,8 @@
     "mysql",
     "sqlite",
     "prisma-postgres",
+    "prisma-compute",
+    "deployment",
     "mcp"
   ],
   "logo": "assets/prisma-icon.svg",
