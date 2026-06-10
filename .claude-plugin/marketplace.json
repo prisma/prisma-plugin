@@ -1,6 +1,6 @@
 {
   "name": "prisma",
-  "description": "Prisma agent tooling for ORM, Client, Postgres, migrations, upgrades, and MCP workflows.",
+  "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, migrations, and database workflows, plus official Prisma MCP integration.",
   "owner": {
     "name": "Prisma"
   },
@@ -8,8 +8,8 @@
     {
       "name": "prisma",
       "source": "./",
-      "description": "Prisma ORM, Prisma Client, Prisma Postgres, and migration guidance with official Prisma MCP integration.",
-      "version": "0.1.0",
+      "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, migrations, and database workflows, plus official Prisma MCP integration.",
+      "version": "0.2.0",
       "author": {
         "name": "Prisma",
         "url": "https://www.prisma.io/"
@@ -24,6 +24,8 @@
         "migrations",
         "prisma-client",
         "prisma-postgres",
+        "prisma-compute",
+        "deployment",
         "mcp"
       ]
     }

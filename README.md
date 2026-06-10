@@ -1,6 +1,6 @@
 # Prisma Plugin
 
-Prisma plugin for agent tools, including Prisma ORM, Prisma Client, Prisma Postgres, Prisma Compute, migrations, upgrades, and Prisma MCP workflows.
+Prisma plugin for agent tools, including curated skills for Prisma ORM, Prisma Client, Prisma Postgres, Prisma Compute, migrations, upgrades, and official Prisma MCP workflows.
 
 ## Install
 
