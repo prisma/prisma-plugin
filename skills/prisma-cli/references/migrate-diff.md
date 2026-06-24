@@ -15,7 +15,7 @@ prisma migrate diff [options]
     - Empty (`empty`)
     - Schema file (`schema`)
     - Migrations directory (`migrations`)
-    - Configured datasource (`config-datasource`)
+    - Database URL (`url`) or Configured Datasource (`config-datasource`)
 - Outputs the difference:
     - Human-readable summary (default)
     - SQL script (`--script`)
@@ -27,26 +27,24 @@ prisma migrate diff [options]
 | `--script` | Render SQL script to stdout |
 | `--exit-code` | Exit 2 if changes detected, 0 if empty, 1 if error |
 | `--config` | Custom path to your Prisma config file |
-| `--output` / `-o` | Write output to a file instead of stdout |
 
 ### Sources (Must provide one `from` and one `to`)
 
 - `--from-empty`, `--to-empty`
 - `--from-schema <path>`, `--to-schema <path>`
 - `--from-migrations <path>`, `--to-migrations <path>`
+- `--from-url <url>`, `--to-url <url>`
 - `--from-config-datasource`, `--to-config-datasource` (uses `prisma.config.ts`)
-
-Removed older URL flags such as `--from-url` and `--to-url` are parsed only to show a help error. Use `--from-config-datasource` or `--to-config-datasource` with `prisma.config.ts` instead.
 
 ## Examples
 
 ### Generate SQL for a schema change
 
-Compare the configured datasource to your local schema:
+Compare current production DB to your local schema:
 
 ```bash
 prisma migrate diff \
-  --from-config-datasource \
+  --from-url "$PROD_DB_URL" \
   --to-schema ./prisma/schema.prisma \
   --script
 ```

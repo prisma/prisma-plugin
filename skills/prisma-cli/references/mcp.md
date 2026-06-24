@@ -11,8 +11,8 @@ prisma mcp
 ## What It Does
 
 - Starts a Model Context Protocol (MCP) server for your Prisma project
-- Wraps selected Prisma CLI workflows for compatible AI tools
-- Exposes tools for migration status, development migrations, migration reset, and Prisma Studio
+- Exposes Prisma schema and database context to compatible AI tools
+- Helps AI assistants understand models, generate queries, and suggest migrations
 
 ## Usage
 
@@ -20,17 +20,11 @@ prisma mcp
 prisma mcp
 ```
 
-The current help surface also accepts:
-
-```bash
-prisma mcp --early-access
-```
-
 ## Typical Use Cases
 
 - Connect Prisma to ChatGPT, Claude, or other MCP-aware tools
-- Let an AI assistant run Prisma migration and Studio workflows through MCP
-- Help an agent inspect migration status and apply development migrations with project context
+- Give an AI assistant access to your Prisma schema structure
+- Help an agent propose queries, schema updates, and migration steps with project context
 
 ## Notes
 

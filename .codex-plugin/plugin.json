@@ -1,7 +1,7 @@
 {
   "name": "prisma",
-  "version": "0.2.0",
-  "description": "Prisma plugin with curated ORM, Prisma Postgres, and Prisma Compute skills plus official Prisma MCP server configuration.",
+  "version": "0.3.0",
+  "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, driver adapters, migrations, upgrades, and database workflows, plus official Prisma MCP integration.",
   "author": {
     "name": "Prisma",
     "url": "https://www.prisma.io/"
@@ -18,6 +18,8 @@
     "prisma-client",
     "prisma-postgres",
     "prisma-compute",
+    "driver-adapters",
+    "upgrades",
     "deployment",
     "mcp"
   ],
@@ -25,8 +27,8 @@
   "mcpServers": "./.mcp.json",
   "interface": {
     "displayName": "Prisma",
-    "shortDescription": "Prisma ORM, Postgres, and Compute guidance with official MCP integration",
-    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres, Prisma Compute app deployment, and Prisma ORM v7 upgrades, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
+    "shortDescription": "Curated Prisma skills with official MCP integration",
+    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres provisioning and operations, Prisma Compute app deployment, Prisma ORM v7 upgrades, and Prisma driver adapter implementation, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
     "developerName": "Prisma",
     "category": "Coding",
     "capabilities": [
@@ -41,8 +43,10 @@
     "termsOfServiceURL": "https://www.prisma.io/terms",
     "defaultPrompt": [
       "Set up Prisma ORM in this project with the right adapter",
+      "Provision a Prisma Postgres database and connect this app",
       "Upgrade this app to Prisma ORM 7 and fix client imports",
       "Deploy this app to Prisma Compute",
+      "Implement or review a Prisma v7 driver adapter",
       "Use Prisma MCP to inspect my schema and plan a migration"
     ],
     "brandColor": "#0C344B",

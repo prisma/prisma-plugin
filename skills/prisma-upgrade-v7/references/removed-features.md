@@ -133,7 +133,7 @@ prisma migrate dev
 prisma generate  # Run explicitly if needed
 ```
 
-Verification against Prisma `7.8.0` showed no generated client files emitted by `migrate dev` or `db push`, even though some CLI help text still says `migrate dev` "trigger[s] generators".
+Local verification with Prisma `7.6.0` showed no generated client files emitted by `migrate dev` or `db push`, even though some CLI help text still says `migrate dev` "trigger[s] generators".
 
 ### --skip-seed
 

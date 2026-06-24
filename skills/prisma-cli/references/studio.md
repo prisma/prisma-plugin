@@ -20,7 +20,7 @@ prisma studio [options]
 
 | Option | Description | Default |
 |--------|-------------|---------|
-| `--port` / `-p` | Port to start Studio on | First available port starting at `51212` |
+| `--port` / `-p` | Port to start Studio on | `5555` |
 | `--browser` / `-b` | Browser to open Studio in | System default |
 | `--config` | Custom path to your Prisma config file | - |
 | `--url` | Database connection string (overrides the one in your Prisma config) | - |
@@ -33,7 +33,7 @@ prisma studio [options]
 prisma studio
 ```
 
-Opens on the default Studio port, currently `51212` when available.
+Opens at http://localhost:5555
 
 ### Custom port
 
