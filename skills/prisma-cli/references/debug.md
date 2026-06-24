@@ -10,12 +10,13 @@ prisma debug [options]
 
 ## What It Does
 
-Outputs debugging context from the current project and process:
-- Prisma schema path or schema lookup error
-- Local engine cache directory
-- Relevant environment variables, grouped by purpose
-- Whether the terminal is interactive
-- Whether CI was detected
+Outputs details about your Prisma environment, including:
+- Prisma CLI version
+- Prisma Client version (if installed)
+- Engine binaries (Query Engine, Migration Engine, etc.)
+- Platform information (OS, Architecture)
+- Node.js version
+- Configured datasource provider
 
 ## Options
 
@@ -24,23 +25,18 @@ Outputs debugging context from the current project and process:
 | `--schema` | Path to schema file |
 | `--config` | Custom path to your Prisma config file |
 
-## Example Output Shape
+## Example Output
 
-```text
--- Prisma schema --
-Path: prisma/schema.prisma
-
--- Local cache directory for engines files --
-Path: ...
-
--- Environment variables --
-...
-
--- Terminal is interactive? --
-true
-
--- CI detected? --
-false
+```
+prisma               : 7.3.0
+@prisma/client       : 7.3.0
+Operating System     : darwin
+Architecture         : arm64
+Node.js              : v20.10.0
+TypeScript           : 5.3.3
+Query Compiler       : enabled
+PSL                  : ...
+Schema Engine        : ...
 ```
 
 ## When to Use

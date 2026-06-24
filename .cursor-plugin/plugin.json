@@ -1,7 +1,7 @@
 {
   "name": "prisma",
-  "version": "0.2.0",
-  "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, migrations, and database workflows, plus official Prisma MCP integration.",
+  "version": "0.3.0",
+  "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, driver adapters, migrations, upgrades, and database workflows, plus official Prisma MCP integration.",
   "author": {
     "name": "Prisma",
     "email": "support@prisma.io",
@@ -21,6 +21,8 @@
     "sqlite",
     "prisma-postgres",
     "prisma-compute",
+    "driver-adapters",
+    "upgrades",
     "deployment",
     "mcp"
   ],

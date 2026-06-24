@@ -59,7 +59,7 @@ To apply migrations in production, run:
 
 ## Exit Codes
 
-- `0`: Database schema is up to date
-- `1`: Error or migration state is not in sync, including pending migrations, divergent histories, missing baselines, or failed migrations
+- `0`: Success (may have pending migrations, but command ran successfully)
+- `1`: Error
 
-To check for pending migrations programmatically, parse the output or use `migrate diff --exit-code` for diff-style status checks.
+To check for pending migrations programmatically, you might need to parse the output or use `migrate diff` with exit code flags.

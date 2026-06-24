@@ -1,15 +1,15 @@
 ---
 name: prisma-cli
-description: Prisma ORM CLI commands reference covering init, generate, migrate, db, dev, studio, validate, format, debug, bootstrap, postgres link, and mcp. Use for ORM/database CLI workflows, not Prisma Compute app deployment. For Prisma Compute, `@prisma/cli app deploy`, `compute:deploy`, `create-prisma --deploy`, apps, deployments, logs, or domains, use the `prisma-compute` skill instead. Triggers on "prisma init", "prisma generate", "prisma migrate", "prisma db", "prisma studio", "prisma mcp", "prisma bootstrap", "prisma postgres link".
+description: Prisma ORM CLI commands reference covering init, generate, migrate, db, dev, studio, validate, format, debug, and mcp. Use for ORM/database CLI workflows, not Prisma Compute app deployment. For Prisma Compute, `@prisma/cli app deploy`, `compute:deploy`, `create-prisma --deploy`, apps, deployments, logs, or domains, use the `prisma-compute` skill instead. Triggers on "prisma init", "prisma generate", "prisma migrate", "prisma db", "prisma studio", "prisma mcp".
 license: MIT
 metadata:
   author: prisma
-  version: "7.8.0"
+  version: "7.6.0"
 ---
 
 # Prisma CLI Reference
 
-Complete reference for Prisma ORM CLI commands. This skill provides guidance on command usage, options, and best practices for current Prisma releases.
+Reference for Prisma ORM CLI commands. This skill provides guidance on command usage, options, and best practices for current Prisma ORM releases.
 
 ## Boundary: Compute
 
@@ -40,14 +40,13 @@ Reference this skill when:
 
 | Category | Commands | Purpose |
 |----------|----------|---------|
-| Setup | `init`, `bootstrap` | Bootstrap new Prisma project or Prisma Postgres workflow |
+| Setup | `init` | Bootstrap new Prisma project |
 | Generation | `generate` | Generate Prisma Client |
 | Validation | `validate`, `format` | Schema validation and formatting |
 | Development | `dev` | Local Prisma Postgres for development |
 | Database | `db pull`, `db push`, `db seed`, `db execute` | Direct database operations |
 | Migrations | `migrate dev`, `migrate deploy`, `migrate reset`, `migrate status`, `migrate diff`, `migrate resolve` | Schema migrations |
-| Prisma Postgres | `postgres link` | Link a local project to a Prisma Postgres database |
-| Utility | `studio`, `mcp`, `platform`, `version`, `debug` | Development and AI tooling |
+| Utility | `studio`, `mcp`, `version`, `debug` | Development and AI tooling |
 
 ## Quick Reference
 
@@ -56,9 +55,6 @@ Reference this skill when:
 ```bash
 # Initialize new project (creates prisma/ folder and prisma.config.ts)
 prisma init
-
-# Bootstrap a Prisma Postgres project or starter
-prisma bootstrap
 
 # Initialize with specific database
 prisma init --datasource-provider postgresql
@@ -70,9 +66,6 @@ prisma init --db
 
 # Initialize with an example model
 prisma init --with-model
-
-# Link an existing local project to Prisma Postgres
-prisma postgres link
 ```
 
 ### Client Generation
@@ -211,8 +204,8 @@ export default defineConfig({
 
 ### Current Command Behavior
 
-- The current `migrate dev` implementation applies migrations and does not call `prisma generate` or `prisma db seed`; run those explicitly when needed.
-- The current `migrate reset` implementation resets and reapplies migrations; run `prisma generate` and `prisma db seed` explicitly when needed.
+- Run `prisma generate` explicitly after `migrate dev`, `db push`, or other schema syncs when you need fresh client output
+- Run `prisma db seed` explicitly after `migrate dev` or `migrate reset` when you need seed data
 - Use `prisma db execute --file ...` for raw SQL scripts
 
 ### Environment Variables
@@ -230,7 +223,6 @@ See individual rule files for detailed command documentation:
 
 ```
 references/init.md           - Project initialization
-references/bootstrap.md      - Prisma Postgres project bootstrap
 references/generate.md       - Client generation
 references/dev.md            - Local development database
 references/db-pull.md        - Database introspection
@@ -245,7 +237,6 @@ references/migrate-resolve.md - Migration resolution
 references/migrate-diff.md   - Schema diffing
 references/studio.md         - Database GUI
 references/mcp.md            - Prisma MCP server
-references/postgres-link.md  - Prisma Postgres project linking
 references/validate.md       - Schema validation
 references/format.md         - Schema formatting
 references/debug.md          - Debug info

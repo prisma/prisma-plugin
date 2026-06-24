@@ -21,7 +21,6 @@ prisma format [options]
 |--------|-------------|
 | `--schema` | Path to schema file |
 | `--config` | Custom path to your Prisma config file |
-| `--check` | Check formatting and fail if files are unformatted |
 
 ## Examples
 
@@ -35,12 +34,6 @@ prisma format
 
 ```bash
 prisma format --schema=./custom/schema.prisma
-```
-
-### Check formatting
-
-```bash
-prisma format --check
 ```
 
 ## Behavior

@@ -19,7 +19,6 @@ prisma db seed [options]
 | Option | Description |
 |--------|-------------|
 | `--config` | Custom path to your Prisma config file |
-| `--schema` | Custom path to your Prisma schema |
 | `--` | Pass custom arguments to seed script |
 
 ## Configuration

@@ -31,7 +31,7 @@ prisma migrate dev [options]
 - Run `prisma generate` explicitly when you need refreshed client output
 - Run `prisma db seed` explicitly when you need seed data
 
-Note: the official CLI help still says `migrate dev` "trigger[s] generators", but the current implementation applies migrations and returns without invoking `prisma generate` or `prisma db seed`. Treat both as explicit follow-up commands when you need generated artifacts or seed data.
+Note: Prisma CLI help for `7.6.0` still says `migrate dev` "trigger[s] generators", but local verification in a temp Prisma 7.6.0 project did not emit generated client files. Treat `prisma generate` as an explicit follow-up step when you need generated artifacts on disk.
 
 ## Examples
 
@@ -126,7 +126,7 @@ When a migration would cause data loss:
 ```bash
 prisma migrate dev --name remove_field
 # Warning: You are about to delete data...
-# Confirm interactively, or use --create-only and review/edit the SQL first.
+# Accept with: --accept-data-loss
 ```
 
 ## Shadow Database

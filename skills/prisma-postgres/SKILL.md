@@ -4,7 +4,7 @@ description: Prisma Postgres setup and operations guidance across Console, creat
 license: MIT
 metadata:
   author: prisma
-  version: "7.8.0"
+  version: "7.6.0"
 ---
 
 # Prisma Postgres

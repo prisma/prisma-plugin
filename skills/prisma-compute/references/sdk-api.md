@@ -18,6 +18,14 @@ Install:
 npm install @prisma/compute-sdk @prisma/management-api-sdk
 ```
 
+Config helper:
+
+```typescript
+import { defineComputeConfig } from "@prisma/compute-sdk/config";
+```
+
+Use this import in `prisma.compute.ts` for type checking. The helper is an identity function; the CLI loader aliases the import when it evaluates config files, so a user project does not need the SDK solely to load a Compute config.
+
 Create an authenticated Management API client:
 
 ```typescript
@@ -64,10 +72,11 @@ SDK methods return `Result<T, E>`. Check `isOk()` or `isErr()` instead of assumi
 
 Current project-compute SDK strategies:
 
-- `AutoBuild`: tries Next.js, Nuxt, Astro, TanStack Start, then Bun
+- `AutoBuild`: tries supported framework strategies such as Next.js, Nuxt, Astro, NestJS, TanStack Start, then Bun
 - `NextjsBuild`: requires standalone output and returns `server.js`
 - `NuxtBuild`: expects `.output/server/index.mjs`
 - `AstroBuild`: expects `dist/server/entry.mjs`
+- `NestjsBuild`: builds a NestJS HTTP server artifact
 - `TanstackStartBuild`: runs `vite build` and expects a Nitro node server at `.output/server/index.mjs`; keep `tanstackStart()` and `nitro()` in Vite config
 - `BunBuild`: runs `bun build` and needs an explicit entrypoint or `package.json` `main`
 - `PreBuilt`: uses an existing artifact directory and relative entrypoint
@@ -130,15 +139,3 @@ Do not log:
 - full database URLs
 - env var values
 - pre-signed upload URLs
-
-## Legacy Standalone Compute CLI
-
-Older project-compute examples use `@prisma/compute-cli` with commands like:
-
-```bash
-bunx @prisma/compute-cli deploy --path .
-bunx @prisma/compute-cli services list --project <project-id>
-bunx @prisma/compute-cli versions list --service <service-id>
-```
-
-Use this only when the user's project or docs explicitly use `@prisma/compute-cli`. For new launch guidance, prefer `@prisma/cli app ...`.

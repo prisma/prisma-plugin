@@ -10,6 +10,7 @@ Run:
 bunx @prisma/cli@latest --help
 bunx @prisma/cli@latest app deploy --help
 bunx @prisma/cli@latest auth whoami
+bunx @prisma/cli@latest auth workspace list --json
 ```
 
 Then inspect:
@@ -17,6 +18,7 @@ Then inspect:
 ```bash
 pwd
 cat package.json
+find .. -maxdepth 3 \( -name 'prisma.compute.ts' -o -name 'prisma.compute.mts' -o -name 'prisma.compute.js' -o -name 'prisma.compute.mjs' -o -name 'prisma.compute.cjs' \) -print
 test -f .env && sed -n 's/=.*/=<redacted>/p' .env
 ```
 
@@ -31,6 +33,66 @@ bunx @prisma/cli@latest app deploy --help
 ```
 
 If a local project has a `compute:deploy` script, prefer that script.
+
+## `prisma.compute.ts` Not Picked Up
+
+This only matters when the project is supposed to use a config-backed deploy. A simple app without `prisma.compute.ts` can still deploy with explicit `app deploy` flags.
+
+Symptoms:
+
+- deploy ignores the expected framework, entrypoint, port, env file, or app root
+- a monorepo target such as `api` is not recognized
+- local state appears in the wrong `.prisma/` directory
+
+Check:
+
+```bash
+pwd
+find .. -maxdepth 4 \( -name 'prisma.compute.ts' -o -name 'prisma.compute.mts' -o -name 'prisma.compute.js' -o -name 'prisma.compute.mjs' -o -name 'prisma.compute.cjs' \) -print
+bunx @prisma/cli@latest app deploy --help
+```
+
+Fix:
+
+- keep exactly one compute config file in the directory where it lives
+- put repo-wide or monorepo config at the repository/workspace root
+- run commands from inside the repo or workspace boundary so discovery can walk up to the config
+- use `[app]` targets from the `apps` keys, such as `bunx @prisma/cli@latest app deploy api`
+- remember that config-relative paths such as `root` and `env.file` resolve from the config file directory
+
+If the installed `@prisma/cli@latest` help does not mention `prisma.compute.ts` or `[app]`, the published package may lag the CLI source. Either test with the intended CLI version or fall back to explicit flags until the new package is available.
+
+## Compute Config Invalid
+
+Symptoms:
+
+- `COMPUTE_CONFIG_INVALID`
+- `COMPUTE_CONFIG_TARGET_REQUIRED`
+- `COMPUTE_CONFIG_TARGET_UNKNOWN`
+- "Multiple compute config files found"
+
+Fix:
+
+- export `defineComputeConfig({ app: ... })` or `defineComputeConfig({ apps: ... })`
+- define exactly one of `app` or `apps`
+- remove unknown top-level keys
+- pass a target for multi-app build/run commands, such as `app build web`
+- pass an existing `apps` key for multi-app deploys, such as `app deploy api`
+- remove custom `build` blocks from `nuxt`, `astro`, and `nestjs` targets
+
+Minimal recovery config:
+
+```typescript
+import { defineComputeConfig } from "@prisma/compute-sdk/config";
+
+export default defineComputeConfig({
+  app: {
+    framework: "hono",
+    entry: "src/index.ts",
+    httpPort: 8080,
+  },
+});
+```
 
 ## `create-prisma --yes` Did Not Deploy
 
@@ -59,6 +121,8 @@ Symptoms:
 - `project list` fails
 - `auth whoami` fails
 - browser login was not completed
+- commands use the wrong workspace after a second login
+- another workspace is stored locally but commands behave signed out
 - `PRISMA_SERVICE_TOKEN` is missing, empty, expired, or lacks workspace/project permissions
 
 Fix:
@@ -66,7 +130,30 @@ Fix:
 ```bash
 bunx @prisma/cli@latest auth login
 bunx @prisma/cli@latest auth whoami
+bunx @prisma/cli@latest auth workspace list --json
 ```
+
+If multiple local OAuth workspaces exist, switch explicitly. Prefer ids from JSON:
+
+```bash
+bunx @prisma/cli@latest auth workspace use <workspace-id>
+bunx @prisma/cli@latest auth whoami --json
+bunx @prisma/cli@latest project list --json
+```
+
+For a human terminal, `auth workspace use` with no argument opens an interactive picker or selects the only local OAuth workspace without prompting. In non-interactive or `--json` mode, use `auth workspace use <id-or-name>` instead.
+
+If the active workspace was logged out or its token refresh failed, the CLI intentionally stays signed out for OAuth commands rather than falling through to another cached workspace. Recover by running `auth workspace list --json` and then `auth workspace use <workspace-id>`.
+
+To remove only one local OAuth workspace session:
+
+```bash
+bunx @prisma/cli@latest auth workspace logout <workspace-id-or-name>
+# or:
+bunx @prisma/cli@latest auth logout --workspace <workspace-id-or-name>
+```
+
+Use plain `auth logout` only when you want to clear all local OAuth workspace sessions.
 
 For CI, current `@prisma/cli` can authenticate with `PRISMA_SERVICE_TOKEN`:
 
@@ -76,9 +163,36 @@ bunx @prisma/cli@latest auth whoami
 bunx @prisma/cli@latest app deploy --json --no-interactive --prod --yes --env .env
 ```
 
+If `PRISMA_SERVICE_TOKEN` is set and non-empty, it is the active auth source and local OAuth workspace switching is unavailable for command execution. Unset `PRISMA_SERVICE_TOKEN` before using `auth workspace use` to change local OAuth workspace context.
+
 If `PRISMA_SERVICE_TOKEN` is set but empty, the CLI errors before trying browser-login credentials. Unset it or provide a valid workspace service token. Never echo, log, or paste the token value; only check whether it is present.
 
-Older `@prisma/compute-cli` and SDK examples may use `PRISMA_API_TOKEN`. Treat that as legacy or SDK-specific until the current `@prisma/cli` source/help says otherwise.
+Local storage hints for debugging:
+
+- Override auth storage with `PRISMA_COMPUTE_AUTH_FILE` when isolating tests.
+- Default macOS OAuth credential file: `~/Library/Application Support/prisma/auth.json`.
+- Active workspace metadata sidecar: `~/Library/Application Support/prisma/auth.context.json`.
+- Project binding: `.prisma/local.json`.
+- Local app/project state: `.prisma/cli/state.json`, usually next to the discovered `prisma.compute.ts`.
+
+Do not print credential files or token values into logs.
+
+## Project Setup Fails
+
+Symptoms:
+
+- `PROJECT_SETUP_REQUIRED`
+- non-interactive deploy cannot choose a Project
+- deploy was expected to create a Project but did not
+
+Fix:
+
+```bash
+bunx @prisma/cli@latest app deploy --project <id-or-name> --json --no-interactive
+bunx @prisma/cli@latest app deploy --create-project <name> --yes
+```
+
+Do not rely on `--yes` alone to choose Project scope. `--project`, `--create-project`, and `PRISMA_PROJECT_ID` are mutually exclusive.
 
 ## Missing or Placeholder `DATABASE_URL`
 
@@ -131,6 +245,21 @@ Fix:
 - capture the deployment id and URL from deploy JSON, then inspect logs with `app logs --deployment <deployment-id>`
 - do not assume `app show`, `app list-deploys`, or `app logs` can filter by branch unless current help output adds that flag
 - treat `app promote <deployment-id>` as a production action because it rebuilds with production env vars
+- do not expect `prisma.compute.ts` to select Project, Branch, production, or database scope; it only supplies app deploy defaults
+
+## `--db` Rejected or Did Not Apply Schema
+
+Symptoms:
+
+- `app deploy --db` is rejected
+- `--db` created env vars but the database is empty
+- a deploy-all run created one database while multiple apps deployed
+
+Fix:
+
+- read [`app-deploy-cli.md`](app-deploy-cli.md) `Database and Env` for the `--db` guardrails
+- run migrations, seed, or schema push yourself after database setup; Compute never applies schema changes for you
+- for multi-app deploy-all with app-specific database isolation, create and assign those database env vars explicitly before deploy
 
 ## Next.js Standalone Missing
 
@@ -213,7 +342,7 @@ Fix:
 - read `process.env.PORT`
 - pass `--http-port <port>` when the app has a fixed port
 - use the generated `compute:deploy` script when it exists
-- remember the current `@prisma/cli app deploy` default is HTTP `3000`; generated Hono/Elysia `compute:deploy` scripts pass `--http-port 8080`
+- remember the current `@prisma/cli app deploy` default is HTTP `3000`; generated Hono/Elysia projects usually configure `8080` through `prisma.compute.ts` or flag-backed `--http-port 8080` scripts
 - use the template defaults: Hono/Elysia `8080`, Next/TanStack/Nuxt `3000`, Astro `4321`
 
 ## Public URL Smoke Test Fails
@@ -259,7 +388,7 @@ Fix:
 
 ## Env Changes Did Not Apply
 
-Generated `compute:deploy` scripts redeploy with `--env .env`; they do not run migrations or seed data.
+Generated `compute:deploy` scripts redeploy using the generated flags and/or `prisma.compute.ts`; they do not run migrations or seed data.
 
 After env changes:
 
