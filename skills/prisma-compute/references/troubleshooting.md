@@ -24,16 +24,6 @@ test -f .env && sed -n 's/=.*/=<redacted>/p' .env
 
 Do not print unredacted secrets.
 
-## `prisma app deploy` Unknown
-
-If `bunx prisma@latest app deploy --help` says `Unknown command "app"`, this is expected before launch. Use:
-
-```bash
-bunx @prisma/cli@latest app deploy --help
-```
-
-If a local project has a `compute:deploy` script, prefer that script.
-
 ## `prisma.compute.ts` Not Picked Up
 
 This only matters when the project is supposed to use a config-backed deploy. A simple app without `prisma.compute.ts` can still deploy with explicit `app deploy` flags.
@@ -60,8 +50,6 @@ Fix:
 - use `[app]` targets from the `apps` keys, such as `bunx @prisma/cli@latest app deploy api`
 - remember that config-relative paths such as `root` and `env.file` resolve from the config file directory
 
-If the installed `@prisma/cli@latest` help does not mention `prisma.compute.ts` or `[app]`, the published package may lag the CLI source. Either test with the intended CLI version or fall back to explicit flags until the new package is available.
-
 ## Compute Config Invalid
 
 Symptoms:
@@ -78,7 +66,9 @@ Fix:
 - remove unknown top-level keys
 - pass a target for multi-app build/run commands, such as `app build web`
 - pass an existing `apps` key for multi-app deploys, such as `app deploy api`
-- remove custom `build` blocks from `nuxt`, `astro`, and `nestjs` targets
+- remove config `build` blocks from `nuxt`, `astro`, and `nestjs` targets
+- for `framework: "custom"`, set both `build.outputDirectory` and `build.entrypoint`
+- when `build.outputDirectory` is set for a configurable framework, also set `build.entrypoint` if the framework needs a configured runtime entrypoint
 
 Minimal recovery config:
 
@@ -102,7 +92,7 @@ export default defineComputeConfig({
 bunx create-prisma@latest --name my-api --template hono --provider postgresql --deploy
 ```
 
-If the template is not deployable in the integrated flow, scaffold succeeds but deploy should be skipped or reported as unsupported.
+If the integrated deploy cannot complete, scaffold succeeds but deploy should be reported as failed.
 
 ## Accidental Prisma Postgres Provisioning
 
@@ -155,7 +145,7 @@ bunx @prisma/cli@latest auth logout --workspace <workspace-id-or-name>
 
 Use plain `auth logout` only when you want to clear all local OAuth workspace sessions.
 
-For CI, current `@prisma/cli` can authenticate with `PRISMA_SERVICE_TOKEN`:
+For CI, `@prisma/cli` can authenticate with `PRISMA_SERVICE_TOKEN`:
 
 ```bash
 test -n "${PRISMA_SERVICE_TOKEN:-}" && echo "PRISMA_SERVICE_TOKEN is set"
@@ -243,21 +233,22 @@ Fix:
 - pass the same `--branch <git-name>` to `app deploy`, `database create`, and branch-specific `project env` commands
 - use `--role production` for production env and `--role preview` for preview-template env
 - capture the deployment id and URL from deploy JSON, then inspect logs with `app logs --deployment <deployment-id>`
-- do not assume `app show`, `app list-deploys`, or `app logs` can filter by branch unless current help output adds that flag
+- `app show`, `app list-deploys`, and `app logs` do not filter by branch; capture and use the deployment id
 - treat `app promote <deployment-id>` as a production action because it rebuilds with production env vars
 - do not expect `prisma.compute.ts` to select Project, Branch, production, or database scope; it only supplies app deploy defaults
 
-## `--db` Rejected or Did Not Apply Schema
+## Database Wiring or Schema Did Not Apply
 
 Symptoms:
 
-- `app deploy --db` is rejected
-- `--db` created env vars but the database is empty
-- a deploy-all run created one database while multiple apps deployed
+- deploy runs but the app cannot find `DATABASE_URL`
+- database env vars exist but the database is empty
+- a deploy-all run points multiple apps at the same branch database
 
 Fix:
 
-- read [`app-deploy-cli.md`](app-deploy-cli.md) `Database and Env` for the `--db` guardrails
+- read [`app-deploy-cli.md`](app-deploy-cli.md) `Database and Env` for the database/env guardrails
+- create and assign database env vars explicitly for the intended branch/app scope
 - run migrations, seed, or schema push yourself after database setup; Compute never applies schema changes for you
 - for multi-app deploy-all with app-specific database isolation, create and assign those database env vars explicitly before deploy
 
@@ -304,7 +295,7 @@ For TanStack Start specifically:
 - run `bun run build` and verify `.output/server/index.mjs` exists
 - do not replace the production server with `vite preview`
 
-Current Compute detection selects TanStack Start when it sees `@tanstack/react-start` or `@tanstack/solid-start`. If the Nitro entrypoint is missing after that, fix the TanStack/Nitro build output; do not assume Compute will silently fall back to a Bun deployment.
+Compute detection selects TanStack Start when it sees `@tanstack/react-start` or `@tanstack/solid-start`. If the Nitro entrypoint is missing after that, fix the TanStack/Nitro build output; do not assume Compute will silently use a Bun deployment.
 
 ## Bun Entrypoint Missing
 
@@ -342,7 +333,7 @@ Fix:
 - read `process.env.PORT`
 - pass `--http-port <port>` when the app has a fixed port
 - use the generated `compute:deploy` script when it exists
-- remember the current `@prisma/cli app deploy` default is HTTP `3000`; generated Hono/Elysia projects usually configure `8080` through `prisma.compute.ts` or flag-backed `--http-port 8080` scripts
+- remember the `@prisma/cli app deploy` default is HTTP `3000`; generated Hono/Elysia projects usually configure `8080` through `prisma.compute.ts` or flag-backed `--http-port 8080` scripts
 - use the template defaults: Hono/Elysia `8080`, Next/TanStack/Nuxt `3000`, Astro `4321`
 
 ## Public URL Smoke Test Fails
@@ -356,8 +347,8 @@ Symptoms:
 Check:
 
 ```bash
-node prisma-compute/scripts/smoke-deployed-app.mjs https://<deployment-url>
-node prisma-compute/scripts/smoke-deployed-app.mjs --expect "ok" https://<deployment-url>/health
+curl -i https://<deployment-url>
+curl -i https://<deployment-url>/health
 bunx @prisma/cli@latest app logs --json
 ```
 
@@ -403,7 +394,7 @@ If using branch-specific env, confirm the branch name and role.
 
 ## Need Logs
 
-Current app:
+Runtime logs for the current app:
 
 ```bash
 bunx @prisma/cli@latest app logs
@@ -420,5 +411,15 @@ Machine-readable:
 ```bash
 bunx @prisma/cli@latest app logs --json
 ```
+
+Build logs for GitHub/Console builds:
+
+```bash
+bunx @prisma/cli@latest build logs <build-id>
+bunx @prisma/cli@latest build logs <build-id> --follow
+bunx @prisma/cli@latest build logs <build-id> --json
+```
+
+Use `build logs` for build output keyed by a Build id from a GitHub check run, Console build page, or Management API build record. Use `app logs` for runtime logs keyed by the current app deployment or a deployment id.
 
 Summarize relevant errors. Do not paste secrets.
