@@ -4,6 +4,7 @@
   "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, driver adapters, migrations, upgrades, MongoDB upgrade paths, and database workflows, plus official Prisma MCP integration.",
   "author": {
     "name": "Prisma",
+    "email": "support@prisma.io",
     "url": "https://www.prisma.io/"
   },
   "homepage": "https://www.prisma.io/docs",

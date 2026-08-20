@@ -12,6 +12,7 @@
       "version": "0.4.0",
       "author": {
         "name": "Prisma",
+        "email": "support@prisma.io",
         "url": "https://www.prisma.io/"
       },
       "repository": "https://github.com/prisma/prisma-plugin",

@@ -27,6 +27,8 @@ Any Agent Plugins–compatible client (ChatGPT/Codex, Cursor, GitHub Copilot, VS
 | Claude Code | Skills and Prisma MCP |
 | Cursor | Rules, skills, and Prisma MCP metadata |
 
+Codex also discovers this repository directly as a plugin marketplace via `.agents/plugins/marketplace.json`; the repo-root plugin path (`"./"`) requires Codex 0.142.0 or newer.
+
 ## What's Included
 
 - Prisma CLI guidance for setup, migrations, database commands, Studio, and MCP
