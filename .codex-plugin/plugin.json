@@ -1,7 +1,7 @@
 {
   "name": "prisma",
-  "version": "0.3.0",
-  "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, driver adapters, migrations, upgrades, and database workflows, plus official Prisma MCP integration.",
+  "version": "0.4.0",
+  "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, driver adapters, migrations, upgrades, MongoDB upgrade paths, and database workflows, plus official Prisma MCP integration.",
   "author": {
     "name": "Prisma",
     "url": "https://www.prisma.io/"
@@ -14,6 +14,7 @@
     "orm",
     "database",
     "postgresql",
+    "mongodb",
     "migrations",
     "prisma-client",
     "prisma-postgres",
@@ -28,7 +29,7 @@
   "interface": {
     "displayName": "Prisma",
     "shortDescription": "Curated Prisma skills with official MCP integration",
-    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres provisioning and operations, Prisma Compute app deployment, Prisma ORM v7 upgrades, and Prisma driver adapter implementation, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
+    "longDescription": "Bring Prisma expertise into Codex with curated skills for Prisma CLI, Prisma Client, database setup, Prisma Postgres provisioning and operations, Prisma Compute app deployment, Prisma ORM v7 upgrades, MongoDB v6 upgrade decisions, and Prisma driver adapter implementation, plus official Prisma MCP server configuration for schema-aware and account-aware database workflows.",
     "developerName": "Prisma",
     "category": "Coding",
     "capabilities": [

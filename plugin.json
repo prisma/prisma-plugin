@@ -1,4 +1,5 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "prisma",
   "version": "0.4.0",
   "description": "Curated Prisma skills for ORM, Prisma Client, Prisma Postgres, Prisma Compute deployments, driver adapters, migrations, upgrades, MongoDB upgrade paths, and database workflows, plus official Prisma MCP integration.",
@@ -14,22 +15,15 @@
     "prisma",
     "orm",
     "database",
-    "schema",
-    "migration",
     "postgresql",
     "mongodb",
-    "mysql",
-    "sqlite",
+    "migrations",
+    "prisma-client",
     "prisma-postgres",
     "prisma-compute",
     "driver-adapters",
     "upgrades",
     "deployment",
     "mcp"
-  ],
-  "logo": "assets/prisma-icon.svg",
-  "primaryColor": "#0C344B",
-  "skills": "skills",
-  "rules": "rules",
-  "mcp": ".mcp.json"
+  ]
 }
