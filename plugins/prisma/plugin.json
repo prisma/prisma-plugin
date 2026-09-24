@@ -1,0 +1,37 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "prisma",
+  "version": "0.4.0-dev.4",
+  "description": "Build and deploy your apps with Prisma.",
+  "author": {
+    "name": "Prisma",
+    "url": "https://www.prisma.io"
+  },
+  "homepage": "https://www.prisma.io",
+  "repository": "https://github.com/prisma/prisma-plugin",
+  "license": "Apache-2.0",
+  "keywords": ["prisma", "composer", "compute", "deployment"],
+  "extensions": {
+    "com.openai": {
+      "interface": {
+        "displayName": "Prisma",
+        "shortDescription": "Build and deploy your apps",
+        "longDescription": "Take your app from idea to a live URL with Prisma. Prisma brings together app hosting with Prisma Compute, managed databases with Prisma Postgres, and type-safe data access with Prisma ORM.\n\nBuild a new app with Prisma Composer or get an existing app ready for Compute. The plugin guides you through setup, local testing, and deployment, then checks that your live app works.",
+        "developerName": "Prisma",
+        "category": "Coding",
+        "capabilities": ["Interactive", "Write", "Deployment"],
+        "websiteURL": "https://www.prisma.io",
+        "privacyPolicyURL": "https://www.prisma.io/privacy",
+        "termsOfServiceURL": "https://www.prisma.io/terms",
+        "defaultPrompt": [
+          "Build a new app and deploy it",
+          "Deploy my existing app"
+        ],
+        "brandColor": "#F34A60",
+        "brandColorDark": "#F34A60",
+        "composerIcon": "./assets/prisma-icon.svg",
+        "logo": "./assets/prisma-icon.svg"
+      }
+    }
+  }
+}

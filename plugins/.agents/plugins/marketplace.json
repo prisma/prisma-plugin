@@ -1,0 +1,20 @@
+{
+  "name": "prisma-preview",
+  "interface": {
+    "displayName": "Prisma Local Preview"
+  },
+  "plugins": [
+    {
+      "name": "prisma",
+      "source": {
+        "source": "local",
+        "path": "./prisma"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Coding"
+    }
+  ]
+}
