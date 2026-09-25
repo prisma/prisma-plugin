@@ -14,10 +14,15 @@ manifest lives in `plugins/prisma/plugin.json`. It includes two skills:
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The `0.4.0-dev.4` onboarding revision is prepared but **not activated**: it needs
-a released CLI containing `auth login --ui-context prisma-plugin`, followed by a
-verified exact version pin. The installed `0.4.0-dev.3` remains the working
-preview. Do not refresh it from this checkout until that release gate is cleared.
+The local development preview is **`0.4.1-dev.1`**. New projects use
+`prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
+back to ChatGPT. The agent handles commands and connection verification; existing
+apps keep their toolchains and use standard sign-in if their CLI lacks the option.
+
+The submitted **`0.4.0`** package remains separate and unchanged, using
+`prisma@8.0.0-rc.15`. Its OpenAI submission was observed in **Review** on
+2026-09-25. That submission connects Prisma's existing MCP server for optional
+diagnostics. Composer and the CLI remain responsible for the build/deploy journey.
 See [validation](docs/validation.md) for completed checks and remaining acceptance.
 
 ### Package and install
@@ -36,7 +41,7 @@ node scripts/package-plugin.mjs
 node scripts/package-plugin.mjs --check
 ```
 
-After the onboarding release gate above is cleared, install the preview explicitly:
+After packaging, install the preview explicitly:
 
 ```bash
 codex plugin marketplace add "$PWD/plugins"
@@ -45,8 +50,9 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Open a **new Codex task in an empty app folder** after installation
-so the new skill is available. Select the Prisma plugin if needed; confirm that
+Codex's cache. Confirm the installed version is `0.4.1-dev.1`. In the ChatGPT
+desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
+with the updated skills. Confirm that
 both `prisma:prisma-build-and-deploy` and `prisma:prisma-composer-core-concepts`
 are available (Codex prefixes skills with their plugin name). Enable only the
 focused Prisma preview for acceptance testing, so another Prisma installation
@@ -54,7 +60,7 @@ does not supply additional skills.
 
 ### First test
 
-Select the Prisma plugin for the task, then use:
+In the ChatGPT desktop app, open **Plugins → Prisma → Try now**, then use:
 
 > Build a simple Todo app and deploy it
 
@@ -105,8 +111,16 @@ scenarios, recorded evidence, and remaining limits of this preview.
 | `.agents/plugins/marketplace.json` | Preserves the existing root plugin for default repository installs |
 | `.gitignore` | Excludes generated bundle content from this initial local preview |
 
-The plugin's `skills/` directory is discovered automatically. There is no MCP
-server in this focused bundle. The older root skills and tool manifests below
+The plugin's `skills/` directory is discovered automatically. MCP is registered
+separately in the submission portal, not embedded in this skills bundle. To test
+diagnostics locally, connect `https://mcp.prisma.io/mcp` through the host's supported
+MCP/OAuth settings alongside the two-skill preview. The MCP session is separate
+from the CLI session. The workflow uses workspace, app, build, deployment, and log
+reads only when diagnosing a failure or responding to a diagnostic request; missing
+MCP access does not block the CLI journey. The server itself exposes broader tools
+and permissions; workflow guidance does not restrict server access.
+
+The older root skills and tool manifests below
 remain the default repository install. The separate `prisma-preview` marketplace
 installs only the Composer bundle after packaging.
 
@@ -122,12 +136,23 @@ Run `node --test scripts/package-plugin.test.mjs` for packaging regression tests
 (requires access to the npm registry). These build an isolated temporary copy and
 verify repeatability, preservation of authored content, and integrity failures.
 
-This is a **local preview**, not a published directory listing. A fresh clone must
-run the packager before installing from this marketplace. Public distribution
-will need to include the complete generated bundle in a release or repository
-and go through the [OpenAI plugin submission](https://platform.openai.com/plugins)
-process. The generated `upstream.json` records exactly which release and files
-were packaged.
+The local marketplace is separate from public directory publication. Rebuilding
+or reinstalling this preview does not replace the skills uploaded for `0.4.0`.
+Do not overwrite the saved submission archives or upload development previews to
+the existing submission. A fresh clone
+must run the packager before installing. Preserve a complete release ZIP of the
+generated `plugins/prisma/` tree, with `plugin.json` at its root; do not include
+the older root plugin. In the current With MCP form, upload each skill as its own
+ZIP with `SKILL.md` at the root and its reference paths intact. Export those ZIPs
+from the same verified bundle without changing their contents. The submitted
+**With MCP** version in the [OpenAI plugin submission](https://platform.openai.com/plugins)
+portal combines its separately registered server with the two uploaded skills.
+Leave that submission untouched while iterating locally. Updating a submission
+or publishing requires a separate instruction from the publisher.
+The generated `upstream.json` records exactly which release and files were packaged.
+See [submission materials](docs/submission.md) for review cases, recording guidance,
+and its recorded preparation history. Submission does not mean OpenAI has approved
+or published the plugin.
 
 ## Existing broad plugin
 
