@@ -14,10 +14,12 @@ manifest lives in `plugins/prisma/plugin.json`. It includes two skills:
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The `0.4.0-dev.4` onboarding revision is prepared but **not activated**: it needs
-a released CLI containing `auth login --ui-context prisma-plugin`, followed by a
-verified exact version pin. The installed `0.4.0-dev.3` remains the working
-preview. Do not refresh it from this checkout until that release gate is cleared.
+The `0.4.0` submission candidate uses the verified `prisma@8.0.0-rc.15` CLI and
+its standard browser sign-in flow. The agent handles commands and connection
+verification. Plugin-specific completion-page wording will follow after a released
+CLI containing that option is verified; it is not a prerequisite for this release.
+The submission also connects Prisma's existing MCP server for optional
+diagnostics. Composer and the CLI remain responsible for the build/deploy journey.
 See [validation](docs/validation.md) for completed checks and remaining acceptance.
 
 ### Package and install
@@ -36,7 +38,7 @@ node scripts/package-plugin.mjs
 node scripts/package-plugin.mjs --check
 ```
 
-After the onboarding release gate above is cleared, install the preview explicitly:
+After packaging, install the preview explicitly:
 
 ```bash
 codex plugin marketplace add "$PWD/plugins"
@@ -105,8 +107,16 @@ scenarios, recorded evidence, and remaining limits of this preview.
 | `.agents/plugins/marketplace.json` | Preserves the existing root plugin for default repository installs |
 | `.gitignore` | Excludes generated bundle content from this initial local preview |
 
-The plugin's `skills/` directory is discovered automatically. There is no MCP
-server in this focused bundle. The older root skills and tool manifests below
+The plugin's `skills/` directory is discovered automatically. MCP is registered
+separately in the submission portal, not embedded in this skills bundle. To test
+diagnostics locally, connect `https://mcp.prisma.io/mcp` through the host's supported
+MCP/OAuth settings alongside the two-skill preview. The MCP session is separate
+from the CLI session. The workflow uses workspace, app, build, deployment, and log
+reads only when diagnosing a failure or responding to a diagnostic request; missing
+MCP access does not block the CLI journey. The server itself exposes broader tools
+and permissions; workflow guidance does not restrict server access.
+
+The older root skills and tool manifests below
 remain the default repository install. The separate `prisma-preview` marketplace
 installs only the Composer bundle after packaging.
 
@@ -122,12 +132,21 @@ Run `node --test scripts/package-plugin.test.mjs` for packaging regression tests
 (requires access to the npm registry). These build an isolated temporary copy and
 verify repeatability, preservation of authored content, and integrity failures.
 
-This is a **local preview**, not a published directory listing. A fresh clone must
-run the packager before installing from this marketplace. Public distribution
-will need to include the complete generated bundle in a release or repository
-and go through the [OpenAI plugin submission](https://platform.openai.com/plugins)
-process. The generated `upstream.json` records exactly which release and files
-were packaged.
+The local marketplace is separate from public directory publication. A fresh clone
+must run the packager before installing. Preserve a complete release ZIP of the
+generated `plugins/prisma/` tree, with `plugin.json` at its root; do not include
+the older root plugin. In the current With MCP form, upload each skill as its own
+ZIP with `SKILL.md` at the root and its reference paths intact. Export those ZIPs
+from the same verified bundle without changing their contents. Reuse the existing
+**With MCP** draft in the [OpenAI plugin submission](https://platform.openai.com/plugins)
+portal, retaining its server configuration and completed fields. Upload the skill ZIPs
+in its Skills section; the portal combines the server with the two skills.
+This preparation stops at the saved draft for publisher review. Submission and
+the later Publish action require separate authorization.
+The generated `upstream.json` records exactly which release and files were packaged.
+See [submission materials](docs/submission.md) for review cases, recording guidance,
+and the remaining publisher inputs. This is a submission candidate, not a claim
+that OpenAI has approved or published the plugin.
 
 ## Existing broad plugin
 

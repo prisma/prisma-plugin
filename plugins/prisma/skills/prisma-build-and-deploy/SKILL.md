@@ -4,8 +4,9 @@ description: >-
   Build and deploy applications when the user selects or invokes the Prisma
   plugin, including requests like "Build a simple Todo app and deploy it" that
   do not name a stack. Use Prisma Composer for new apps and Prisma Compute for
-  deployment. Also use for explicit Composer/Compute requests and recovering
-  Composer deployments. Does not cover unrelated ORM or database administration.
+  deployment. Also use for explicit Composer/Compute requests, deployment
+  diagnostics, and recovering Composer deployments. Does not cover unrelated ORM
+  or database administration.
 ---
 
 # Build and deploy with Prisma
@@ -21,6 +22,16 @@ This journey requires ChatGPT's desktop app with local execution. Check the
 actual execution environment: a cloud task launched from desktop is still out of
 scope. In web/cloud execution, explain that the user must continue in a desktop
 task running locally; do not offer manual credentials as a workaround.
+
+Do not process protected health information (PHI) or payment card data regulated
+by PCI DSS through files, CLI commands, database operations, MCP tools, logs, or
+application verification. If the request or available context indicates such
+data may be present, stop before accessing affected resources; clarify without
+requesting real data samples and offer an isolated environment with synthetic
+data only. If encountered unexpectedly, stop further access and do not reproduce
+the data in responses or artifacts. Never retrieve it merely to redact it later
+or switch tools to bypass this restriction. Ordinary Todo requests need no extra
+questionnaire; healthcare or payment prototypes using synthetic data are supported.
 
 For Composer declarations, wiring, builds, and database concepts, read the bundled
 [Composer core concepts](../prisma-composer-core-concepts/SKILL.md). Reuse its
@@ -60,7 +71,7 @@ work continues. Combine outstanding workspace and region questions when possible
    Prisma. If you don't have an account, you can create one during sign-in. Return
    here when you're finished; I'll handle the setup." Describe only providers
    offered by the actual page. Start one managed login using the reference's
-   plugin context option and keep it alive. If the browser does not open, share
+   supported command and keep it alive. If the browser does not open, share
    the actual authorization link emitted by that attempt. Leave signup and
    consent to the user; never request passwords, tokens, or callback URLs in chat.
 2. After login, require successful process completion, authenticated identity,
@@ -119,6 +130,12 @@ action backed by the database when applicable, and a browser check. Use the
 project's supported service inspection commands to distinguish an allocated
 service from a live version. A zero exit code or created project is not enough.
 For Todo, check CRUD against the deployed application as well as locally.
+
+Use the optional [MCP diagnostics](references/toolchain.md#optional-mcp-diagnostics)
+only to investigate a failure or an explicit diagnostic request. Match the MCP
+workspace and application to the CLI target before inspecting state or logs.
+Keep Composer/CLI responsible for changes and deployment; unavailable MCP access
+must not block their normal path. MCP authentication does not authenticate the CLI.
 
 On failure:
 
