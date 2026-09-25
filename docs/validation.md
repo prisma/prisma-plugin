@@ -1,6 +1,65 @@
 # Plugin validation
 
-## Data-use restriction revision (2026-09-25)
+## Onboarding preview `0.4.1-dev.1` (2026-09-25)
+
+This development preview selects released CLI `8.0.0-rc.17` for new apps and
+passes `--ui-context prisma-plugin` during login. Existing apps retain their
+toolchains; an older CLI without the option uses standard browser login and an
+agent explanation to return to chat. No new deployment is required for this
+instruction change. Composer/cloud `0.21.0`, ORM Postgres `8.0.0-rc.11`, branding,
+MCP diagnostics, data-use restrictions, and the two-skill structure are retained.
+
+Directly executed release checks on macOS with Node `24.16.0` and npm `11.13.0`:
+
+- npm published `prisma@8.0.0-rc.17`; the publish workflow completed successfully.
+- A clean installation of the exact CLI/Composer/cloud/ORM set succeeded without
+  `--force` or `--legacy-peer-deps`. Composer, cloud-control and ORM target-control
+  imports succeeded. The ORM package exports subpaths, not a root module.
+- Released `auth login --help` lists `--ui-context` with `prisma-plugin` as its
+  supported value. Inspection of the published bundle confirms context propagation,
+  return-to-ChatGPT success/failure wording and conditional omission of the
+  skills-install section. This inspection is not a completed browser login test.
+
+Executed preview checks:
+
+- The existing skill validator, packaging regression (one test), rebuilt-bundle
+  integrity check and whitespace check passed. The installed `prisma-preview`
+  reports `0.4.1-dev.1`; both skills and all seven installed files match the bundle.
+- A separate seven-file preview ZIP matches the bundle byte-for-byte. SHA-256:
+  `c340e05c8951d525f7640ff5c5e5034e7641f917623802a5a7dcf94910da3866`.
+  Composer retains SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- `auth login`, `dev`, `deploy`, and `project list` help commands ran successfully
+  with the released CLI. Existing `0.4.0` submission archive checksums still pass.
+
+Browser acceptance used a new isolated credential file, initially confirmed
+unauthenticated. Luan completed the standard browser flow with his existing
+account and selected **ChatGPT Plugin Review**. The login process exited zero;
+the subsequent `auth whoami --json` reported both `authenticated: true` and
+`verified: true`, and a remote `project list --json` succeeded with three existing
+projects in that workspace. No personal session was reset and no cloud resource
+was created or changed.
+
+Luan's screenshot of the actual success page confirms the return-to-ChatGPT
+wording and absence of the terminal/skills-install section. The page still uses
+the CLI's previous logo; updating that embedded artwork is a separate upstream
+follow-up. This was returning-account authorization, not fresh account creation
+or a new application/deployment test. Failure-page wording was inspected in the
+published code, not exercised through a new failed browser login.
+
+Instruction review (not executed agent acceptance): existing valid sessions still
+reuse identity and remote-access checks without login; older CLIs without the
+option retain standard login without an automatic upgrade. No new test framework
+or repeated cloud deployment was added.
+
+The submitted `0.4.0` source is preserved in commit `7658737`; all seven bundle
+files matched its saved archive before changes. Its archive and per-skill ZIPs
+remain unchanged. Luan submitted that version, and the portal was observed in
+**Review** on 2026-09-25. Older sections below record preparation-time results and
+stopping points; they do not describe the current submission status or prove that
+the new CLI has completed an end-to-end deployment.
+
+## Historical data-use restriction revision (2026-09-25)
 
 Version remains `0.4.0`. The listing and authored workflow now prohibit processing
 PHI and PCI-regulated payment card data, including through local files, CLI,

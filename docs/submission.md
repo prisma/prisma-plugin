@@ -1,6 +1,18 @@
-# Prisma 0.4.0 draft review
+# Prisma 0.4.0 submission record
 
-## Release and stopping point
+Luan submitted `0.4.0`; the portal status was observed as **Review** on
+2026-09-25. The preparation notes below describe the earlier saved draft and
+remain historical evidence, including the then-outstanding reviewer-access gap.
+They are not instructions to edit the submitted version or a claim of approval.
+
+The submitted source is preserved in commit `7658737`. Its complete archive has
+SHA-256 `ad755a35a96fe9130251f3ca716fd122389556d6e81179cb2edba57fe765f225`;
+the separately uploaded workflow ZIP has SHA-256
+`cd233523b62b2fa6f965b018d30c67a4f62255c863a126644326dd5a110e86b4`.
+The `0.4.1-dev.1` onboarding preview is separate local development. Do not replace
+these archives, upload that preview, or change the portal during this work.
+
+## Historical preparation: release and stopping point
 
 Complete the existing **With MCP** draft in the verified Prisma organization's
 **Prisma Plugin** project. Preserve its completed copy, prompts, test cases, server

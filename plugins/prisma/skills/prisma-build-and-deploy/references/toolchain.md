@@ -6,29 +6,30 @@ the plugin's version-specific installation and command guidance.
 
 ## Verified installation set
 
-Use the verified versions below and the standard browser sign-in command.
-`prisma@8.0.0-rc.15` does not support `--ui-context`; do not pass that option,
-patch installed packages, or use a floating version. Plugin-specific completion
-page wording can follow after an exact released CLI version is verified.
+Use the verified versions below for new projects. The released
+`prisma@8.0.0-rc.17` supports plugin-specific browser completion guidance through
+`--ui-context prisma-plugin`. Use the exact release; do not patch installed
+packages or use a floating version.
 
 | Package | Version | Purpose |
 | --- | --- | --- |
 | `@prisma/composer` | `0.21.0` | Composer authoring and the bundled concepts skill |
 | `@prisma/composer-prisma-cloud` | `0.21.0` | Compute and Postgres target |
 | `@prisma/orm-postgres` | `8.0.0-rc.11` | Required peer declared by this cloud-target release |
-| `prisma` | `8.0.0-rc.15` | Unified CLI for interactive development and deployment |
+| `prisma` | `8.0.0-rc.17` | Unified CLI for interactive development and deployment |
 
-Verified on 2026-09-23: a clean npm install of these four exact versions succeeded
+Verified on 2026-09-25: a clean npm install of these four exact versions succeeded
 under Node 24.16.0 and npm 11.13.0, without peer-dependency bypass flags. The
 Composer, cloud-control, and ORM-control imports loaded, and the unified CLI's
-dev, deploy, and project-list help commands ran. This verifies installation and
-command loading; it does not by itself verify an app or cloud deployment.
+auth-login, dev, deploy, and project-list help commands ran. This verifies
+installation and command loading; it does not by itself verify an app or cloud
+deployment.
 
 For a new npm project (translate to the existing package manager when relevant):
 
 ```sh
 npm install --save-exact @prisma/composer@0.21.0 @prisma/composer-prisma-cloud@0.21.0 @prisma/orm-postgres@8.0.0-rc.11
-npm install --save-dev --save-exact prisma@8.0.0-rc.15
+npm install --save-dev --save-exact prisma@8.0.0-rc.17
 ```
 
 Installing the peer does not require the app to use Prisma ORM. It satisfies the
@@ -96,8 +97,13 @@ workspace without printing secrets or silently changing credential modes.
 For a missing or expired session:
 
 ```sh
-npm exec -- prisma auth login --json
+npm exec -- prisma auth login --ui-context prisma-plugin --json
 ```
+
+For an existing app, inspect its installed `prisma auth login --help` first. If it
+lacks `--ui-context`, preserve its toolchain and use `prisma auth login --json`
+instead. Explain that the user should return to this conversation even if that
+older page mentions a terminal; do not force an upgrade solely for the wording.
 
 Use a persistent **PTY/interactive process** in the desktop-local environment;
 the current CLI keeps its callback listener open after a browser-launch failure
@@ -108,10 +114,10 @@ short total timeout. Capture the `verification` endpoint event (or the emitted
 authorization URL) before browser opening. If opening fails, make that exact URL
 a clickable chat link while the same attempt remains pending. Never substitute
 the Console homepage, construct an OAuth URL, or pass the local callback URL to
-the user. Do not relay the CLI's terminal/paste instructions to chat. This release's
-browser completion page may mention returning to a terminal or installing skills;
-tell the user to return to this conversation instead. The agent handles the CLI,
-and the plugin already supplies the skills.
+the user. Do not relay the CLI's terminal/paste instructions to chat. The plugin
+completion page directs the user back to ChatGPT and omits skills-install
+instructions. The agent handles the CLI, and the plugin already supplies the
+skills.
 
 The user completes signup and consent in their browser. Describe providers only
 after inspecting that page, not from a hard-coded list. A browser success page or
@@ -210,7 +216,8 @@ evidence for the tested versions, not a claim that every other runtime fails.
 The cloud smoke test also reproduced `DEPLOY.CONTAINER_FAILED` with
 `Prisma Management API error resolving containers: SyntaxError: Unexpected token`
 and a response beginning with gzip bytes (`0x1f 0x8b`). This occurred under Node
-24.16.0 with the package set above. The deploy report had no resource nodes and a
+24.16.0 with CLI `8.0.0-rc.15` and the Composer/cloud/ORM pins above; it has not
+been reproduced with `8.0.0-rc.17`. The deploy report had no resource nodes and a
 remote project listing confirmed no project had been created. After preserving
 that report, the same application, workspace, region, and stage deployed
 successfully with project-local Bun 1.4.2, including its CLI child processes.

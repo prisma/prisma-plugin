@@ -14,11 +14,14 @@ manifest lives in `plugins/prisma/plugin.json`. It includes two skills:
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The `0.4.0` submission candidate uses the verified `prisma@8.0.0-rc.15` CLI and
-its standard browser sign-in flow. The agent handles commands and connection
-verification. Plugin-specific completion-page wording will follow after a released
-CLI containing that option is verified; it is not a prerequisite for this release.
-The submission also connects Prisma's existing MCP server for optional
+The local development preview is **`0.4.1-dev.1`**. New projects use
+`prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
+back to ChatGPT. The agent handles commands and connection verification; existing
+apps keep their toolchains and use standard sign-in if their CLI lacks the option.
+
+The submitted **`0.4.0`** package remains separate and unchanged, using
+`prisma@8.0.0-rc.15`. Its OpenAI submission was observed in **Review** on
+2026-09-25. That submission connects Prisma's existing MCP server for optional
 diagnostics. Composer and the CLI remain responsible for the build/deploy journey.
 See [validation](docs/validation.md) for completed checks and remaining acceptance.
 
@@ -47,8 +50,9 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Open a **new Codex task in an empty app folder** after installation
-so the new skill is available. Select the Prisma plugin if needed; confirm that
+Codex's cache. Confirm the installed version is `0.4.1-dev.1`. In the ChatGPT
+desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
+with the updated skills. Confirm that
 both `prisma:prisma-build-and-deploy` and `prisma:prisma-composer-core-concepts`
 are available (Codex prefixes skills with their plugin name). Enable only the
 focused Prisma preview for acceptance testing, so another Prisma installation
@@ -56,7 +60,7 @@ does not supply additional skills.
 
 ### First test
 
-Select the Prisma plugin for the task, then use:
+In the ChatGPT desktop app, open **Plugins → Prisma → Try now**, then use:
 
 > Build a simple Todo app and deploy it
 
@@ -132,21 +136,23 @@ Run `node --test scripts/package-plugin.test.mjs` for packaging regression tests
 (requires access to the npm registry). These build an isolated temporary copy and
 verify repeatability, preservation of authored content, and integrity failures.
 
-The local marketplace is separate from public directory publication. A fresh clone
+The local marketplace is separate from public directory publication. Rebuilding
+or reinstalling this preview does not replace the skills uploaded for `0.4.0`.
+Do not overwrite the saved submission archives or upload development previews to
+the existing submission. A fresh clone
 must run the packager before installing. Preserve a complete release ZIP of the
 generated `plugins/prisma/` tree, with `plugin.json` at its root; do not include
 the older root plugin. In the current With MCP form, upload each skill as its own
 ZIP with `SKILL.md` at the root and its reference paths intact. Export those ZIPs
-from the same verified bundle without changing their contents. Reuse the existing
-**With MCP** draft in the [OpenAI plugin submission](https://platform.openai.com/plugins)
-portal, retaining its server configuration and completed fields. Upload the skill ZIPs
-in its Skills section; the portal combines the server with the two skills.
-This preparation stops at the saved draft for publisher review. Submission and
-the later Publish action require separate authorization.
+from the same verified bundle without changing their contents. The submitted
+**With MCP** version in the [OpenAI plugin submission](https://platform.openai.com/plugins)
+portal combines its separately registered server with the two uploaded skills.
+Leave that submission untouched while iterating locally. Updating a submission
+or publishing requires a separate instruction from the publisher.
 The generated `upstream.json` records exactly which release and files were packaged.
 See [submission materials](docs/submission.md) for review cases, recording guidance,
-and the remaining publisher inputs. This is a submission candidate, not a claim
-that OpenAI has approved or published the plugin.
+and its recorded preparation history. Submission does not mean OpenAI has approved
+or published the plugin.
 
 ## Existing broad plugin
 
