@@ -64,12 +64,25 @@ remain outside Git. Before any deployment changes, occasional browser loading
 failures and an API HTTP 503 occurred; subsequent health/list/create reads worked.
 This pre-existing intermittent behavior is not attributed to GitHub automation.
 
-The managed `git connect` attempt reached the existing Prisma App installation
-for `luanvdw`; GitHub required human identity confirmation before configuration.
-The CLI timed out cleanly with `GIT.REPO_INSTALLATION_REQUIRED`. No connection was
-created and no workflow was pushed. App access, first unchanged-code deployment,
-two preview pushes, approved merge, and approved branch-deletion cleanup remain
-pending. Do not read the
+The first managed `git connect` attempt timed out with
+`GIT.REPO_INSTALLATION_REQUIRED` while GitHub awaited identity confirmation.
+Luan subsequently completed that confirmation. GitHub then showed the existing
+`luanvdw` installation (ID `29254405`, installed in 2022) covering all repositories;
+its permission-review page reported that the App was already up to date.
+
+On resuming, Prisma Console still showed no installation connected to **ChatGPT
+Plugin Review**. Its supported existing-installation selector offered `prisma`,
+not `luanvdw`. Both the CLI installation flow and Console's Add installation flow
+led to GitHub's existing-installation configuration instead of completing the
+workspace association. No permissions were changed and no other installation was
+connected. This is a workspace-association blocker, not an outstanding request for
+Luan to repeat identity confirmation. Its root cause is not yet established.
+
+No repository connection or workflow deployment was created. The first unchanged-
+code deployment, two preview pushes, approved merge, and approved branch-deletion
+cleanup remain pending resolution of that association. CodeQL checks on draft
+PR #9 passed. The original live resources, synthetic Todo samples, and dedicated
+reviewer app remain unchanged. Do not read the
 historical local/live deployment results below as proof of this new CI path.
 
 ### Scenario review (not executed agent or security-enforcement tests)
