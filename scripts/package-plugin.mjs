@@ -14,8 +14,11 @@ const source = {
   integrity: 'sha512-IIoDrcyz9ttkd7auUWgpEr6jGbSmnJF+PkKdxxgFmcSll6jnNIcHyJVLyrg1ZhthKbMmqymJmKCorkFPHKAiXA==',
 };
 const skill = 'prisma-composer-core-concepts';
-const workflow = 'prisma-build-and-deploy';
-const expectedSkills = [workflow, skill].sort();
+const authoredSkills = {
+  'prisma-build-and-deploy': 'references/toolchain.md',
+  'prisma-github-deploy': 'references/github-deploy.md',
+};
+const expectedSkills = [...Object.keys(authoredSkills), skill].sort();
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const output = join(root, 'plugins/prisma');
 const generated = [`skills/${skill}`, 'assets', 'LICENSE', 'upstream.json'];
@@ -51,13 +54,15 @@ async function check() {
   if (actual['assets/prisma-icon.svg'] !== hash(await readFile(join(root, 'assets/prisma-icon.svg')))) {
     throw new Error('The source icon changed. Rebuild the bundle.');
   }
-  console.log(`Verified prisma: ${workflow} plus ${skill} from ${source.name}@${source.version}; ${Object.keys(actual).length} files.`);
+  console.log(`Verified prisma: ${expectedSkills.join(', ')}; upstream ${source.name}@${source.version}; ${Object.keys(actual).length} files.`);
 }
 
 async function build() {
   // Authored files are required inputs, never generated or replaced by the packager.
-  await readFile(join(output, 'skills', workflow, 'SKILL.md'));
-  await readFile(join(output, 'skills', workflow, 'references/toolchain.md'));
+  for (const [name, reference] of Object.entries(authoredSkills)) {
+    await readFile(join(output, 'skills', name, 'SKILL.md'));
+    await readFile(join(output, 'skills', name, reference));
+  }
   const temporary = await mkdtemp(join(tmpdir(), 'prisma-plugin-'));
   try {
     console.log(`Downloading ${source.name}@${source.version}…`);
@@ -86,7 +91,9 @@ async function build() {
     await mkdir(join(staged, 'skills'), { recursive: true });
     await mkdir(join(staged, 'assets'));
     await cp(join(upstream, 'skills', skill), join(staged, 'skills', skill), { recursive: true });
-    await cp(join(output, 'skills', workflow), join(staged, 'skills', workflow), { recursive: true });
+    for (const name of Object.keys(authoredSkills)) {
+      await cp(join(output, 'skills', name), join(staged, 'skills', name), { recursive: true });
+    }
     await cp(join(upstream, 'LICENSE'), join(staged, 'LICENSE'));
     await cp(join(root, 'assets/prisma-icon.svg'), join(staged, 'assets/prisma-icon.svg'));
     await cp(join(output, 'plugin.json'), join(staged, 'plugin.json'));

@@ -1,5 +1,100 @@
 # Plugin validation
 
+## GitHub deployment preview `0.4.1-dev.2` (2026-09-28)
+
+This preview adds the authored `prisma-github-deploy` skill and one supporting
+reference. Build-and-deploy offers a handoff only after a verified deployment.
+Packaging now preserves both authored skills and imports the unchanged Composer
+`0.21.0` reference, for exactly three skills. The older root `prisma-compute`
+skill was inspected for overlap; its older CLI/configuration path is not reused
+or included in this bundle. No root skill, upstream system, or submission changed.
+
+The GitHub path pins `prisma/cloud-deploy-action@v1.7.0`, with OIDC, explicit live
+stage mapping, separate branch previews, per-target serialization, and a guard
+against green `skipped-no-credential` outcomes. The reference excludes the action's
+unsupported destroy workflow. Runtime/dependency pins are preserved per app;
+GitHub Actions execution does not enable browser/cloud agent execution.
+
+### Directly executed checks
+
+- Existing packaging regression passed: two authored skills and references survive
+  repeat builds, missing inputs fail before replacement, tampering fails integrity,
+  and the bundle contains exactly the three expected skills.
+- All three skills passed the existing skill validator. Bundle integrity and
+  whitespace checks passed. Composer SHA-256 remains
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- The example workflow parsed as YAML with push-only triggering, read-content/OIDC
+  permissions, serialized deployment, and an explicit unsuccessful-outcome guard.
+  Parsing is not evidence of a successful GitHub deployment.
+- The pilot app's typecheck/build passed with its unchanged package pins:
+  CLI `8.0.0-rc.15`, Composer/cloud `0.21.0`, ORM Postgres `8.0.0-rc.11`,
+  Bun `1.4.2`, Node `24.16.0`, and npm `11.13.0`.
+
+- The separate nine-file preview ZIP matches the bundle and the refreshed local
+  `prisma-preview` installation byte-for-byte, including all three skills and both
+  authored references. Installed version is `0.4.1-dev.2`. ZIP SHA-256:
+  `5a7d0fe725cbbe6924af06a1c353a1a2f381bc49583e7693b3f7ce932d2f383f`.
+- The submitted `prisma-0.4.0-mcp-draft.zip` retains SHA-256
+  `ad755a35a96fe9130251f3ca716fd122389556d6e81179cb2edba57fe765f225`.
+  No portal interaction, release, or submission replacement was performed.
+
+### Pilot acceptance in progress
+
+The approved app is **onboarding-todo** in **ChatGPT Plugin Review**, Frankfurt
+(`eu-central-1`), live stage `demo`. The dedicated reviewer Todo is untouched.
+Baseline inspection confirmed the existing project, service, database, and live
+version. Source and the lockfile were reviewed and saved privately in
+[luanvdw/prisma-plugin-onboarding-todo](https://github.com/luanvdw/prisma-plugin-onboarding-todo).
+Local credentials, deploy reports/state, logs, and private test instructions are
+excluded. The original isolated CLI credential environment is retained.
+
+| Identity | Baseline |
+| --- | --- |
+| Workspace | `vt3bpj2c1qjx4sw2ne1vq17n` |
+| Project | `proj_ywzp2e8yo8edvlq8lqt0occ0` |
+| Live stage | `demo` |
+| Service | `cps_u2dqk2l7etg77rc9bi3i55st` |
+| Database | `db_szqv1hbn0sn85n6a4k9yw1k3` |
+| Service version | `cpv_iqa86kwn1vyqi4u8ek7aen39` |
+
+Live URL: <https://u2dqk2l7etg77rc9bi3i55st.fra.prisma.build>.
+A synthetic Todo was created in Chrome; an independent API sample with ID
+`9e97488a-64de-4707-9c3f-e10a7717ed0f` was recorded for comparison. Test cookies
+remain outside Git. Before any deployment changes, occasional browser loading
+failures and an API HTTP 503 occurred; subsequent health/list/create reads worked.
+This pre-existing intermittent behavior is not attributed to GitHub automation.
+
+The managed `git connect` attempt reached the existing Prisma App installation
+for `luanvdw`; GitHub required human identity confirmation before configuration.
+The CLI timed out cleanly with `GIT.REPO_INSTALLATION_REQUIRED`. No connection was
+created and no workflow was pushed. App access, first unchanged-code deployment,
+two preview pushes, approved merge, and approved branch-deletion cleanup remain
+pending. Do not read the
+historical local/live deployment results below as proof of this new CI path.
+
+### Scenario review (not executed agent or security-enforcement tests)
+
+| Scenario | Expected behavior confirmed in the instructions |
+| --- | --- |
+| Cancel GitHub authorization | Keep app/repository progress; stop the old attempt, resume the same mapping when authorized. |
+| Denied repository access | Explain the missing access; no public-repo, credential-copying, or replacement-project workaround. |
+| Already connected correctly | Reuse connection/workflow; do not create duplicate automation. |
+| Different repository/project or live-stage collision | Clarify before changes; never disconnect, rename resources, or overwrite live data to make setup pass. |
+| Missing OIDC credentials | Treat `skipped-no-credential` as incomplete; inspect connection and permissions. |
+| Build/startup/quota failure | Report failed phase and actual live/partial state; retain identifiers and prior live app. |
+| PHI/PCI may be present | Stop affected access; synthetic environment only, with no MCP-to-CLI bypass. |
+
+Routing review used five should-fire cases: accepted post-deploy offer; direct
+“save this deployed Composer app to GitHub”; direct “enable automatic updates for
+this Prisma app”; “resume the GitHub connection”; and “diagnose this Prisma branch
+preview.” Each selects the new skill and retains the existing target.
+
+Five should-not-fire cases: ordinary “build a Todo app and deploy it”; local-only
+app work; unrelated Git refactoring; an ORM query question; and an explicit decline
+of GitHub setup. These do not start repository setup. A direct GitHub request for
+an undeployed app establishes the live target through the build workflow first.
+No new automated scenario framework was added.
+
 ## Onboarding preview `0.4.1-dev.1` (2026-09-25)
 
 This development preview selects released CLI `8.0.0-rc.17` for new apps and

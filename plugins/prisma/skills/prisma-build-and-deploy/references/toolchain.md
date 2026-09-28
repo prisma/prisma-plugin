@@ -145,14 +145,16 @@ An existing project retains its region. Use `--stage demo` for a new demo; omitt
 it targets production. The module's application name selects the project; inspect
 `--name` for an explicit override. Reuse the same name and stage on retries.
 
-For CI, the standalone Composer CLI, or operations imported from
+For GitHub deployment automation, follow [Prisma GitHub Deploy](../../prisma-github-deploy/SKILL.md)
+and its OIDC guidance; do not ask the user to copy a service token into GitHub.
+For other headless integrations, the standalone Composer CLI, or operations imported from
 `@prisma/composer/control`, provide `PRISMA_SERVICE_TOKEN` and
 `PRISMA_WORKSPACE_ID` through the environment. The control API does not inherit
 the unified CLI's browser session. The unified CLI does not expose all standalone
 verbs, so do not invent `prisma destroy` or `prisma log`; inspect the supported
 surface before attempting cleanup or log inspection.
 Those credential paths are technical context, not a fallback for this novice
-journey. Web/cloud execution, including desktop-launched cloud tasks, is deferred;
+journey. Web/cloud agent execution, including desktop-launched cloud tasks, is deferred;
 direct the user to desktop-local execution without manual credential workarounds.
 
 ## Optional MCP diagnostics

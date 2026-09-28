@@ -157,3 +157,13 @@ blocker, and material demo limitations (for example, cookie-only ownership or
 lack of cross-device access). If Console deployment history was unavailable,
 report it separately from the live result; do not create Git commits to suppress
 that warning. Keep unverified work clearly separate from success.
+
+## Offer GitHub saving after success
+
+After the first verified deployment, offer: **"Save your app to GitHub and enable
+automatic updates?"** Skip this when already configured or declined in the current
+journey. Do not start GitHub setup merely because an app was requested. If accepted,
+explicitly hand off to [Prisma GitHub Deploy](../prisma-github-deploy/SKILL.md),
+carrying the existing app folder, workspace/project IDs, region, live stage, and
+verified URL. That skill owns repository saving, connection, and branch previews;
+do not recreate those procedures here.
