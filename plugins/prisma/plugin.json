@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "prisma",
-  "version": "0.4.0-dev.4",
+  "version": "0.4.1-dev.1",
   "description": "Build and deploy your apps with Prisma.",
   "author": {
     "name": "Prisma",
@@ -16,11 +16,12 @@
       "interface": {
         "displayName": "Prisma",
         "shortDescription": "Build and deploy your apps",
-        "longDescription": "Take your app from idea to a live URL with Prisma. Prisma brings together app hosting with Prisma Compute, managed databases with Prisma Postgres, and type-safe data access with Prisma ORM.\n\nBuild a new app with Prisma Composer or get an existing app ready for Compute. The plugin guides you through setup, local testing, and deployment, then checks that your live app works.",
+        "longDescription": "Take your app from idea to a live URL with Prisma. Prisma brings together app hosting with Prisma Compute, managed databases with Prisma Postgres, and type-safe data access with Prisma ORM.\n\nBuild a new app with Prisma Composer or get an existing app ready for Compute. The plugin guides you through setup, local testing, and deployment, then checks that your live app works. Optional diagnostics use Prisma's MCP server to inspect deployment state and logs.\n\nRequires ChatGPT's desktop app with local execution. Initially tested on macOS.\n\nDo not use this plugin to process protected health information (PHI) or payment card data regulated by PCI DSS, including through connected databases, application logs, or project files. For healthcare or payment-related prototypes, use a separate environment containing synthetic data only.",
         "developerName": "Prisma",
         "category": "Coding",
         "capabilities": ["Interactive", "Write", "Deployment"],
         "websiteURL": "https://www.prisma.io",
+        "supportURL": "https://www.prisma.io/support",
         "privacyPolicyURL": "https://www.prisma.io/privacy",
         "termsOfServiceURL": "https://www.prisma.io/terms",
         "defaultPrompt": [

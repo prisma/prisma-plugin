@@ -1,11 +1,295 @@
-# Local preview validation
+# Plugin validation
 
-Prepared source/bundle: `0.4.0-dev.4`, 2026-09-24. Installed working preview remains
-`0.4.0-dev.3+codex.20260924021431`. **Desktop v1 is not yet complete:** the new
-onboarding needs a released CLI with the context option and fresh-user acceptance.
-The published `prisma@8.0.0-rc.15` pin is retained as the previous verified baseline,
-not represented as supporting the new option. Application/deployment results below
-remain the `0.4.0-dev.2` baseline. Agent-reported evidence is labeled separately.
+## Onboarding preview `0.4.1-dev.1` (2026-09-25)
+
+This development preview selects released CLI `8.0.0-rc.17` for new apps and
+passes `--ui-context prisma-plugin` during login. Existing apps retain their
+toolchains; an older CLI without the option uses standard browser login and an
+agent explanation to return to chat. No new deployment is required for this
+instruction change. Composer/cloud `0.21.0`, ORM Postgres `8.0.0-rc.11`, branding,
+MCP diagnostics, data-use restrictions, and the two-skill structure are retained.
+
+Directly executed release checks on macOS with Node `24.16.0` and npm `11.13.0`:
+
+- npm published `prisma@8.0.0-rc.17`; the publish workflow completed successfully.
+- A clean installation of the exact CLI/Composer/cloud/ORM set succeeded without
+  `--force` or `--legacy-peer-deps`. Composer, cloud-control and ORM target-control
+  imports succeeded. The ORM package exports subpaths, not a root module.
+- Released `auth login --help` lists `--ui-context` with `prisma-plugin` as its
+  supported value. Inspection of the published bundle confirms context propagation,
+  return-to-ChatGPT success/failure wording and conditional omission of the
+  skills-install section. This inspection is not a completed browser login test.
+
+Executed preview checks:
+
+- The existing skill validator, packaging regression (one test), rebuilt-bundle
+  integrity check and whitespace check passed. The installed `prisma-preview`
+  reports `0.4.1-dev.1`; both skills and all seven installed files match the bundle.
+- A separate seven-file preview ZIP matches the bundle byte-for-byte. SHA-256:
+  `c340e05c8951d525f7640ff5c5e5034e7641f917623802a5a7dcf94910da3866`.
+  Composer retains SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- `auth login`, `dev`, `deploy`, and `project list` help commands ran successfully
+  with the released CLI. Existing `0.4.0` submission archive checksums still pass.
+
+Browser acceptance used a new isolated credential file, initially confirmed
+unauthenticated. Luan completed the standard browser flow with his existing
+account and selected **ChatGPT Plugin Review**. The login process exited zero;
+the subsequent `auth whoami --json` reported both `authenticated: true` and
+`verified: true`, and a remote `project list --json` succeeded with three existing
+projects in that workspace. No personal session was reset and no cloud resource
+was created or changed.
+
+Luan's screenshot of the actual success page confirms the return-to-ChatGPT
+wording and absence of the terminal/skills-install section. The page still uses
+the CLI's previous logo; updating that embedded artwork is a separate upstream
+follow-up. This was returning-account authorization, not fresh account creation
+or a new application/deployment test. Failure-page wording was inspected in the
+published code, not exercised through a new failed browser login.
+
+Instruction review (not executed agent acceptance): existing valid sessions still
+reuse identity and remote-access checks without login; older CLIs without the
+option retain standard login without an automatic upgrade. No new test framework
+or repeated cloud deployment was added.
+
+The submitted `0.4.0` source is preserved in commit `7658737`; all seven bundle
+files matched its saved archive before changes. Its archive and per-skill ZIPs
+remain unchanged. Luan submitted that version, and the portal was observed in
+**Review** on 2026-09-25. Older sections below record preparation-time results and
+stopping points; they do not describe the current submission status or prove that
+the new CLI has completed an end-to-end deployment.
+
+## Historical data-use restriction revision (2026-09-25)
+
+Version remains `0.4.0`. The listing and authored workflow now prohibit processing
+PHI and PCI-regulated payment card data, including through local files, CLI,
+database operations, MCP, logs and application verification. The existing
+diagnostic reference applies the same restriction before log access and preserves
+secret redaction and the broader-permissions disclosure. No server, authentication,
+dependency, packaging-behavior or upstream Composer changes were made.
+
+Scenario review of the authored instructions (not executed agent tests or proof
+of technical enforcement):
+
+| Scenario | Reviewed behavior |
+| --- | --- |
+| Ordinary Todo request without restricted-data context | Continues the existing build/deploy journey without an extra questionnaire. |
+| Healthcare prototype explicitly using synthetic data in an isolated environment | Remains supported; no real patient examples are requested. |
+| Request to inspect real patient records | Stops before file/database/tool access, explains the restriction and offers a synthetic environment. |
+| Deployment logs may contain restricted data | Clarifies before retrieval; does not fetch for later redaction or use CLI to bypass the restriction. |
+
+The same paragraph requires stopping further access and avoiding reproduction in
+responses or artifacts after unexpected exposure. It covers application/browser
+verification as well as MCP, so switching tools does not remove the restriction.
+
+Executed checks:
+
+- The existing skill validator, packaging regression (one comprehensive test),
+  rebuilt-bundle integrity check and whitespace check passed. Initial packaging
+  attempts could not reach npm from the sandbox; rerunning with registry access
+  and Node 24.16.0 passed without changing dependencies.
+- Both installed skills and all seven bundle files match the rebuilt source
+  byte-for-byte. Composer 0.21.0 retains SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- Complete and individual workflow ZIP contents were compared with source bytes.
+  Checksums were refreshed; the prior skills-only fallback and Composer skill ZIP
+  remain unchanged. No cloud deployment or new recording was performed.
+
+The public description was appended and verified after reloading the existing
+portal draft. The revised workflow skill replaced the previous upload and passed
+its new scan; Composer remains passed and exactly two skills are listed. All other
+Info fields, icon asset identities, video URL and release notes were unchanged.
+Publisher declarations remain unchecked and the draft has not been submitted.
+Existing reviewer-access notes explicitly disclose missing dedicated credentials;
+clearing form validation does not satisfy that requirement or establish an
+OpenAI exception. Publisher declarations and submission remain Luan's decision.
+
+## Current candidate: MCP draft preparation (2026-09-24)
+
+The user approved resuming the existing With MCP draft after the isolated server
+fix shipped. Version remains `0.4.0`; the two-skill structure, dependency pins,
+upstream Composer reference, and CLI build/deploy path remain unchanged. Optional
+diagnostic instructions are restored in the authored workflow and its existing
+reference. No new upstream or packaging-behavior changes are part of this work.
+The stopping point is Luan's review of the saved draft, not submission.
+
+Direct production checks after PR prisma/pdp-control-plane#5458 merged:
+
+- The challenge returned HTTP 200, `text/plain`, and the exact draft token;
+  the OpenAI portal now shows **Domain verified**.
+- A fresh OAuth-authorized scan in Plugins returned 31 tools. All three missing
+  `openWorldHint` values are present; all 93 annotation explanations are saved.
+- OAuth resource discovery returned HTTP 200; unauthenticated MCP returned 401;
+  an unknown well-known path returned 404.
+- A fresh read-only draft audit confirmed the five positive and three negative
+  cases and listing copy match prior work. Icons, skills, reviewer credentials,
+  and demo URL were still absent. The directory version is **Draft**. There is
+  no visible editor audit trail, so this does not prove nobody else accessed it.
+
+The authenticated scan verifies discovery, not execution of diagnostic tools.
+Application/log smoke results and final packaging/upload outcomes follow below.
+Dedicated reviewer access, reviewer-account tests,
+the hosted recording, and publisher review remain pending. No submission or
+publication is authorized by this preparation task.
+
+### Draft preparation checks (2026-09-24–25)
+
+- Existing packaging regression passed, and the authored skill passed the
+  skill-creator validator. The validator needed PyYAML in an isolated temporary
+  environment; no dependency was added to this repository.
+- The focused preview was installed as `prisma@prisma-preview`, version `0.4.0`.
+  The bundle and installed files were compared byte-for-byte. The original broad
+  installation was preserved. The Composer reference SHA-256 remains
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- CLI `auth whoami`, remote project listing, and service inspection succeeded
+  for the existing Plugins Todo target. The service had a running live version.
+  No deployment, restart, or cloud resource mutation was performed.
+- MCP Inspector 2.8.0 completed a separately authorized OAuth connection to
+  Plugins, using isolated temporary storage. All five diagnostic reads succeeded:
+  workspace identity, project-filtered apps, branch-filtered builds, app
+  deployments, and deployment logs. Workspace, project, app, live-version and
+  endpoint identifiers matched the CLI target. There were no build-history
+  records; logs returned a clean end at cursor `0`. CLI log inspection for the
+  same version also succeeded with no retained lines. Empty history/logs are not
+  represented as a build failure or proof of application health.
+- The authenticated server advertised 31 tools with explicit annotation booleans.
+  Inspector reported zero schema portability errors and 29 warnings across 13
+  tools; the portal's successful scan remains the submission scan result. No
+  upstream schema changes were made.
+- An allowlisted 9-file source fixture was prepared outside this repository. It
+  excludes credentials, local state, reports, dependencies, and machine paths.
+  Reviewer-account testing and the hosted recording remain pending.
+- Luan created ChatGPT Plugin Review and approved one isolated Todo deployment
+  there. Its source copy has a distinct project name and passed clean dependency
+  installation, typechecking, and build under Node 24.16.0. The first installation
+  context resolved Node 23.11.0; it was repeated with the selected Node executable
+  pinned in PATH. Luan completed its isolated CLI OAuth login. Authenticated
+  identity and a remote empty project list confirmed the requested workspace.
+  The approved fixture then deployed successfully with the previously working Bun
+  invocation. CLI inspection confirmed a running live version; browser checks
+  verified creation, completion, persistence after reload, and deletion. One
+  sample Todo remains for review. Local restart persistence uses the earlier
+  baseline; it was not repeated. The missing Git history warning was reported
+  separately from application success. No commit was created to suppress it.
+  This is owner-authorized setup, not a dedicated reviewer's sign-in test.
+- Chrome upload permissions were enabled by Luan. Both approved PNG icons were
+  uploaded and saved. The full plugin ZIP left no skills in the With MCP draft;
+  individual skill ZIPs with root `SKILL.md` were accepted. Both skills are now
+  listed and scanning. Skill source and supporting-reference bytes are unchanged;
+  no packager behavior changed and the complete release/fallback ZIPs remain.
+- The saved deployment test expectation was corrected to distinguish deployment
+  records from live runtime status. The final portal page currently flags missing
+  icons, private test credentials, and publisher declarations before the icon
+  uploads. Release notes are
+  present; availability remains the existing Allow all selection for Luan's review.
+  Skill safety scans remain pending and the hosted recording is still absent.
+  No declarations were accepted and nothing was submitted.
+
+Static scenario review of the small instruction change: ordinary build/deploy
+does not require MCP; unavailable/denied/mismatched access preserves the selected
+target and app progress; partial deployment retains state and does not trigger
+MCP writes or automatic cleanup. Explicit Vercel hosting, general PostgreSQL
+education, and AWS diagnostics from supplied logs do not select this workflow.
+These are instruction reviews, not executed fresh-agent or reviewer-account
+tests. Inspection of the server schema also confirms deployment listing returns
+records and version IDs, not runtime status; the reference now makes that limit
+explicit. Existing local restart and live CRUD evidence remains the baseline.
+
+## Historical skills-only candidate (2026-09-24, superseded)
+
+The user ruled out all changes outside the plugin repository. The optional MCP
+integration was removed from the candidate and listing; Composer/CLI remains the
+working build-and-deploy path. MCP metadata, domain verification, and a new CLI
+release are not dependencies of this package. The prior MCP scan/draft evidence
+below is historical, not the current publication route. The existing unpublished
+draft was preserved.
+
+The official Skills only route is documented but absent from the verified Prisma
+organization's Create plugin menu. Draft menus expose no type-conversion action.
+OpenAI must provide the supported submission route; the cause of the missing
+option has not been established. No upstream changes or public submission occurred.
+
+## Initial submission candidate (`0.4.0`, 2026-09-24)
+
+The initial release uses the verified `prisma@8.0.0-rc.15` package set and standard
+`prisma auth login --json`. Plugin-specific browser completion wording is deferred;
+the agent explains that the user should return to chat and continues to require
+login completion, authenticated identity, and remote workspace access. The listing
+now states the desktop-local requirement and macOS validation scope.
+
+The CLI feature and release PRs were merged, but publication failed. A fresh npm
+lookup on 2026-09-24 still returns E404 for `prisma@8.0.0-rc.16`; no unpublished
+version or unsupported context option is used. Installed rc.15 login help confirms
+the normal browser login command and JSON output are supported.
+
+Direct checks: the existing packaging regression test, authored skill validator,
+and rebuilt bundle integrity check passed. A stray macOS `.DS_Store` in the bundle
+root caused the first integrity check to fail; removing that metadata file restored
+the expected file set. The two skills, supporting reference, approved branding,
+license, and provenance are included. The imported Composer `0.21.0` reference is
+unchanged. No personal sessions, installed plugins, or cloud resources were changed.
+
+The older root `0.3.0` installation is sourced from the local repository; its
+visibility in Codex is not evidence of public directory publication. The user
+subsequently obtained access to the existing verified Prisma business organization
+and created its dedicated Prisma Plugin project. An unpublished With MCP draft
+exists there. The portal offers separate MCP and Skills sections, so the server
+is registered in the portal and the two-skill bundle is uploaded separately.
+This supersedes the earlier unverified-organization/skills-only investigation.
+
+Application/deployment evidence remains the previously completed macOS runs below;
+no fresh-account signup or additional deployment was performed for this candidate.
+The original fully verified novice-onboarding acceptance remains follow-up work.
+The following sections are historical records; their dev.4 release hold does not
+apply to this rc.15-based initial submission candidate.
+
+### Optional MCP diagnostics (2026-09-24)
+
+The workflow now routes explicit diagnostics or failure investigations to five
+read-only operations on the existing Prisma MCP server. It preserves the CLI
+target, requires matching workspace/application IDs, keeps MCP and CLI sessions
+separate, and falls back to supported CLI inspection when MCP is unavailable.
+The server's broader write tools and `workspace:admin`/`offline_access` scopes are
+not narrowed by these instructions. No server, packaging behavior, or API changed.
+
+Direct local checks passed: packaging regression, skill-format validation, bundle
+integrity, and diff whitespace. The upstream Composer reference SHA-256 remains
+`67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+Approved artwork was rendered to 512px and 96px square PNGs for the portal.
+
+Static scenario review confirms that ordinary build/deploy requests do not require
+MCP, missing/denied/mismatched MCP access preserves app progress, and partial
+deployment recovery does not claim success or invoke MCP writes. These are
+instruction reviews, not fresh-agent executions or authenticated MCP smoke tests.
+Workflow, recovery, and the portal's five positive/three non-trigger cases are in
+[submission materials](submission.md); unexecuted cases are not represented as
+passed. Existing macOS deployment evidence below remains the application baseline.
+
+### Authenticated submission scan (2026-09-24)
+
+The user approved ChatGPT scanner OAuth access to the isolated Plugins workspace.
+The scan succeeded and returned 31 tools, including all five intended diagnostics.
+The draft contains explanations for all 90 supplied annotation values. It also
+reports missing `openWorldHint` on `create_prisma_postgres_database`,
+`create_prisma_postgres_connection_string`, and `create_prisma_postgres_recovery`.
+Those explicit booleans must be supplied by the MCP server and rescanned; portal
+text cannot repair them. The three source definitions were located in
+`pdp-control-plane/services/mcp-server/mcp/tools/`; a three-line annotation patch
+was prepared outside this repository and passed `git apply --check` against that
+checkout. It was not applied or deployed. No MCP resource operation was executed during the scan,
+so the app/state/log smoke test remains pending.
+
+The domain challenge URL returned HTTP 404. The exact token and maintainer handoff
+are kept with local submission artifacts, outside the repository. OAuth discovery
+also reported enterprise domain restrictions unavailable; this was a warning,
+not an observed blocker requiring an OIDC implementation in this revision.
+
+The existing draft now contains listing copy, verified Prisma business identity,
+starter prompts, release notes, and the required review-case drafts. Icon/ZIP
+uploads were blocked by Chrome extension file access; native computer-use fallback
+was also unavailable. Reviewer credentials, fixture checks, demo recording, domain
+verification, missing server annotations, and publisher declarations remain
+incomplete. No submission, legal acceptance, or public publication occurred.
 
 ## Local PR review (2026-09-24)
 
