@@ -119,10 +119,12 @@ than treating a green skipped run as success. Approved branch deletion relies on
 platform preview cleanup; the action's unsupported destroy mode is excluded.
 GitHub Actions runs remotely, while the agent still works in a desktop-local task.
 
-Validation must demonstrate the same live resources and data after redeployment,
-a separate preview updated by subsequent pushes, and live update/preview cleanup
-after approved merge and deletion. See the latest validation entry for executed
-results and remaining limitations; the earlier macOS runs do not prove CI behavior.
+The pilot verified connecting an existing personal GitHub App installation,
+redeploying the same live app without losing its Todos, and updating an isolated
+preview twice while preserving its data. The approved merge updated the same live
+app, and approved branch deletion cleaned up the preview without affecting live
+data. See the latest validation entry for executed results and remaining
+limitations, including intermittent app data-read errors.
 This adds no broad PR-management or automatic cross-conversation app discovery.
 
 ### What's maintained here

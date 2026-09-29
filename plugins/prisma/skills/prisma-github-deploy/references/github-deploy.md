@@ -37,8 +37,12 @@ npm exec -- prisma git connect --project PROJECT_ID https://github.com/OWNER/REP
 ```
 
 Use a persistent interactive process: if the Prisma GitHub App does not cover the
-repository, the CLI opens installation and waits. Let the user grant the required
-repository access. This is distinct from GitHub login for pushing code. Require
+repository in the selected workspace, the CLI opens a connection page and waits.
+For an App already installed on an individual GitHub account, choose **Connect
+your GitHub account**; use **Install Prisma on GitHub** for a new installation or
+organization account. Let the user complete browser authorization. Do not reinstall
+the App or change repository permissions merely to associate an existing installation.
+This is distinct from GitHub login for pushing code. Require
 successful completion and independently verify the existing project's connection.
 The connection enables OIDC and platform branch lifecycle; the CLI does not add
 the deployment workflow. Inspect any Console-generated workflow PR to avoid two

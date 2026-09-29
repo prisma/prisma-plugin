@@ -1,6 +1,76 @@
 # Plugin validation
 
+## GitHub handoff retest `0.4.1-dev.2` (2026-09-29)
+
+After deployment of [the personal-installation connection fix](https://github.com/prisma/pdp-control-plane/pull/5488),
+the existing pilot resumed without a new repository, project, installation, or
+permission change. Luan completed **Connect your GitHub account** in the browser.
+The managed CLI returned an active repository connection; Console independently
+confirmed the private repository on the existing project. The skill reference now
+describes this choice separately from installing the App for a new account.
+
+Directly executed on macOS with the pilot's existing isolated Prisma session:
+
+- Repository `luanvdw/prisma-plugin-onboarding-todo` (GitHub ID `1392182365`)
+  connected to project `proj_ywzp2e8yo8edvlq8lqt0occ0` in workspace
+  `vt3bpj2c1qjx4sw2ne1vq17n`; connection ID
+  `srcrepo_db6ke4y5l4p222lcc68qk72q`.
+- [First GitHub deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36562607699)
+  succeeded for commit `3e38635415453f56822e110c52352c867572a92f` with unchanged
+  application code. Action `v1.7.0` obtained a short-lived credential through OIDC;
+  build `bld_g0f1xpezs4z9hxvjwlkc4k3r` succeeded. The existing `demo` service,
+  database, and URL below were preserved; live version became
+  `cpv_q09unep5b20d5xjjqbur9n0y`. Both baseline Todos survived. Browser creation,
+  completion, and deletion of an additional disposable Todo passed.
+- [First feature-branch deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36562995539)
+  succeeded for commit `6a9e9e31defe8808aa638b3fbcbb6bed2fd6ac20`, build
+  `bld_sdi3xfbgdhtg5is7isjx9a1s`. It created preview branch
+  `br_kizx8kms9o2s31q4fc6hrhr7`, service `cps_ieml1cwn91pw3fjqk2a552t8`,
+  database `db_aeg2pfjfuf1nuog7jucxk3v5`, and version
+  `cpv_jjxt1sggmvxf4y787ecbpud1`, all in Frankfurt. The preview browser displayed
+  the changed subtitle and saved a synthetic Todo. The live browser retained its
+  original subtitle and baseline Todo. [Pilot PR #1](https://github.com/luanvdw/prisma-plugin-onboarding-todo/pull/1)
+  contained only the small copy change and deployment documentation.
+- [Second feature-branch deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36563517042)
+  succeeded for commit `02d76482aa1feaeeb557ec97457c384baa66016e`. The same preview
+  branch, service, database, and URL were retained; live version became
+  `cpv_pgxwuc6tanenzstzsvo7ex85`. The browser showed the second subtitle and its
+  saved Todo after reload. Resource lists contained exactly one preview service
+  and database. The live app's version, subtitle, and both baseline samples stayed
+  unchanged. One live API read returned the previously observed HTTP 503; a retry
+  succeeded with the original sample. This intermittent application behavior is
+  still an observed limitation, not evidence of data loss or a failed CI run.
+
+- Luan approved merging pilot PR #1 and deleting its feature branch. The
+  [merge-triggered live deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36563968462)
+  succeeded for commit `fc731bfa93507bb68c1d573d807a0ae61f6ef53d`, build
+  `bld_ap8k11qew2vbwlez3o8yqpji`. The original live service, database, and URL
+  remained, with running version `cpv_yncuuvho8c01f0bsrv1wp2ey`. The browser showed
+  the merged subtitle and original Todo together; the API baseline also matched.
+- After the approved branch deletion, platform cleanup removed the preview branch.
+  The project-wide database list contained only the original live database, and
+  the preview URL returned HTTP 404. The live service/version and API sample
+  remained intact. No action destroy job or manual cloud-resource deletion was
+  used. All four deployment runs completed successfully.
+
+This completes the pilot's GitHub connection, OIDC deployment, repeat-preview,
+merge-to-live, and branch-cleanup acceptance. It does not prove every framework,
+package manager, operating system, or real-user authorization path. The existing
+intermittent data-read behavior remains recorded above.
+
+Packaging regression, all three skill validations, bundle integrity, and whitespace
+checks passed. The nine-file ZIP and refreshed `prisma-preview` installation match
+the bundle byte-for-byte at `0.4.1-dev.2`. Preview ZIP SHA-256:
+`5b490d8d96fd12ec1a459f7b582e51feb174d9652c015182a4109c8be08a6d92`.
+Composer's unchanged hash and the submitted `0.4.0` archive hash were verified
+against the values recorded below. The dedicated reviewer Todo, personal login,
+submission, and dependency pins are unchanged. Routing and recovery cases below
+remain scenario reviews, not executed agent or security-enforcement tests.
+
 ## GitHub deployment preview `0.4.1-dev.2` (2026-09-28)
+
+Historical initial preparation and blocked attempt; the dated retest above records
+subsequent results without rewriting the evidence captured here.
 
 This preview adds the authored `prisma-github-deploy` skill and one supporting
 reference. Build-and-deploy offers a handoff only after a verified deployment.
