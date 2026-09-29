@@ -9,14 +9,14 @@ manifest lives in `plugins/prisma/plugin.json`. It includes three skills:
 - `prisma-build-and-deploy`: this repository's short workflow for installation,
   local verification, authentication, targeting, deployment, and recovery.
 - `prisma-github-deploy`: save a deployed app to GitHub, connect its existing
-  Prisma project, and verify automatic deployments and branch previews.
+  Prisma project, and verify default-branch automatic deployments.
 - `prisma-composer-core-concepts`: copied unchanged from the published
   `@prisma/composer@0.21.0` package, with its upstream license and provenance.
 
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The local development preview is **`0.4.1-dev.2`**. New projects use
+The local development preview is **`0.4.1-dev.3`**. New projects use
 `prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
 back to ChatGPT. The agent handles commands and connection verification; existing
 apps keep their toolchains and use standard sign-in if their CLI lacks the option.
@@ -52,7 +52,7 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Confirm the installed version is `0.4.1-dev.2`. In the ChatGPT
+Codex's cache. Confirm the installed version is `0.4.1-dev.3`. In the ChatGPT
 desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
 with the updated skills. Confirm that
 `prisma:prisma-build-and-deploy`, `prisma:prisma-github-deploy`, and
@@ -106,26 +106,32 @@ scenarios, recorded evidence, and remaining limits of this preview.
 ### Save to GitHub and enable updates
 
 After a verified first deployment, the build workflow offers **“Save your app to
-GitHub and enable automatic updates?”** Acceptance hands off to the new GitHub
+GitHub and enable automatic updates?”** Acceptance hands off to the GitHub
 skill. You can also request this directly for an existing deployed Composer app.
 The agent confirms a repository destination (private by default), saves reviewed
 source, and connects it to the existing Prisma project. GitHub login for saving
 code and Prisma GitHub App access for deployment are separate browser steps.
+An explicit save-only request saves the code without enabling or triggering deployment.
 
-The reference pins `prisma/cloud-deploy-action@v1.7.0` with GitHub OIDC. Default
-branch pushes retain the existing live stage, including `demo`; feature branches
-get separate previews. The workflow checks missing-credential outcomes rather
-than treating a green skipped run as success. Approved branch deletion relies on
-platform preview cleanup; the action's unsupported destroy mode is excluded.
+The reference pins `prisma/cloud-deploy-action@v1.7.0` with GitHub OIDC. New
+automation deploys pushes to the repository's actual default branch to the existing
+live stage, including `demo`. Appropriate existing workflows, including previews,
+are preserved. Missing-credential outcomes mean incomplete setup, even when the
+GitHub run is green. The workflow-configuration commit verifies automatic updates
+without changing app behavior; a successful no-op is acceptable. Setup finishes
+with repository, successful run, and live-app links, without a demonstration PR.
 GitHub Actions runs remotely, while the agent still works in a desktop-local task.
 
-The pilot verified connecting an existing personal GitHub App installation,
-redeploying the same live app without losing its Todos, and updating an isolated
-preview twice while preserving its data. The approved merge updated the same live
-app, and approved branch deletion cleaned up the preview without affecting live
-data. See the latest validation entry for executed results and remaining
-limitations, including intermittent app data-read errors.
-This adds no broad PR-management or automatic cross-conversation app discovery.
+Shared guidance checks runtimes before work in each execution context, bounds
+HTTP checks, and retains test identity outside Git. Recovery inspects database-backed
+behavior as well as routing and service state, preserves live resources, and uses
+the established deployment path after an evidence-supported fix.
+
+The completed pilot remains the deployment baseline. Its preview, merge, and
+cleanup exercise is retained in maintainer validation notes, outside the setup
+journey. See [validation](docs/validation.md) for executed checks, scenario reviews,
+and unresolved application reliability observations. A separate branch-development
+skill, broad PR-management, and automatic cross-conversation discovery are deferred.
 
 ### What's maintained here
 

@@ -1,5 +1,110 @@
 # Plugin validation
 
+## Focused GitHub handoff `0.4.1-dev.3` (2026-09-29)
+
+This instruction revision ends at **build → deploy → save to GitHub → verify
+automatic updates → finish**. New automation targets only the actual default
+branch and the existing live stage. Existing working workflows, including
+previews, remain intact. Save-only requests do not connect or deploy; already
+configured apps reuse matching successful-run evidence. No feature, demonstration
+PR, additional preview push, merge, or cleanup is required to finish setup.
+
+The shared reference now covers runtime selection before work in each execution
+context, network/credential-store errors, 30-second HTTP timeouts, response checks,
+and explicit writable test-artifact paths outside Git. Recovery uses state, logs,
+and database-backed behavior; it does not prescribe routine live stop/start or
+unproven database workarounds. Claims distinguish immediate recovery from a
+retested idle condition, redeployment from restart, and resource reuse from new
+application code becoming live.
+
+### Evidence basis and investigation follow-ups
+
+The Daylist execution report and conversation supplied by Luan describe a
+successful GitHub connection/deployment followed by an unnecessary preview
+demonstration, runtime drift, an authentication false negative in a restricted
+context, and verification-script failures. These are **agent-reported evidence**,
+not actions reproduced during this revision. The reported versions were CLI
+`8.0.0-rc.17`, Composer/cloud `0.21.0`, and Postgres.js `3.4.9`.
+
+Two separate investigations remain deferred:
+
+- **Idle database behavior:** DB-backed requests reportedly hung while `/health`
+  returned 200. A connection-strategy change and immediate retry succeeded, but
+  the relevant idle condition was not repeated. Establish a reproduction before
+  selecting an application or upstream fix; this preview adds no connection recipe.
+- **Live stop/start routing:** the report records a running version with
+  `live: null`, a missing live URL, and a public 404 after stop/start. Redeployment
+  restored routing. Verify the supported lifecycle semantics and reproduce with
+  recorded versions before calling this a general platform bug.
+
+The completed pilot below remains the directly executed deployment baseline.
+This revision creates no cloud deployment, test PR, or Todo application change.
+No upstream code, dependency pins, packaging behavior, or submission changes are
+included. These instructions guide agents; they are not enforcement tests or a
+guarantee against failures.
+
+### Scenario reviews (not executed agent journeys)
+
+| Scenario | Expected behavior under the revised guidance |
+| --- | --- |
+| Ordinary build/deploy or declined offer | Build/deploy retains its existing sequence; GitHub setup starts only after acceptance or a direct request. |
+| Accepted offer or direct combined setup | Save reviewed source, connect the existing project, verify the workflow-configuration commit and app, return repository/run/live links, and finish. No invented feature or PR. |
+| Explicit save-only, including an undeployed app | No Prisma login, provisioning, connection, or new automation is required. If an existing workflow would deploy the push, clarify a non-deploying destination before pushing. |
+| Already configured repository, including previews | Reuse the matching connection/workflow and successful-run evidence; verify current app state without replacing the workflow or forcing a push. |
+| Interrupted setup, denied access, or build failure | Inspect completed steps and resume the same target; report partial progress without duplicate repositories/projects or destructive recovery. |
+| Successful no-op or skipped credentials | No-op convergence may pass with matching run/commit/app evidence; `skipped-no-credential` remains incomplete even if GitHub is green. No artificial version change. |
+| Runtime drift after context switch | Resolve and verify Node, package-manager, and relevant Bun executables in the new context before install/build/deploy. Preserve app pins. |
+| GitHub authentication error in a restricted context | Establish supported network and credential-store access and retry the read before claiming credentials are invalid or asking for login. |
+| Timeout, non-JSON response, or test-script exception | Use a finite request timeout, 30 seconds by default; inspect status/format before JSON parsing and separate request failure from harness failure. |
+| Lost artifact path or cookie identity | Establish explicit writable absolute paths outside Git; retain session identity and created record IDs as operations succeed for diagnosis and targeted cleanup. |
+| Database failure with a healthy `/health` | Check DB-backed behavior, deployment state, routing, and logs; do not infer health from the static endpoint or routinely stop/start the live version. |
+| Recovery uncertain or one retry succeeds after an idle failure | Preserve resources when safe recovery is unclear. After a supported fix, use the same deployment path and reverify; without repeating the idle condition, report only immediate recovery. |
+| Data survives a redeploy or resources remain unchanged | Describe precisely those observations; do not claim an actual restart or activation of changed application code without corresponding evidence. |
+
+### Maintainer-only preview exercise
+
+The full preview acceptance exercise remains available for separately authorized
+maintainer testing; it is not part of the installed setup journey or a new skill:
+
+1. Record live target identities and synthetic sample data; verify an unchanged-app
+   GitHub deployment preserves them.
+2. With explicit test scope, push a harmless feature branch and open a PR. Verify
+   an isolated preview service/database/URL and an unchanged live app/data.
+3. Push a second application change. Verify the same preview resources, updated
+   behavior, and retained preview data; a documentation-only no-op cannot prove
+   activation of changed application code.
+4. Only after approval, merge and verify the same live app updates with its data.
+   After approved branch deletion, verify platform preview cleanup and intact
+   live resources. Do not add an unsupported action destroy job or manually delete
+   resources to make the check pass.
+
+The `0.4.1-dev.2` pilot below completed this exercise. Its results remain historical
+evidence and were not repeated for this instruction revision.
+
+### Directly executed checks
+
+- All three skills passed the existing skill validator. The existing packaging
+  regression passed, including repeat builds, authored-file preservation, missing
+  inputs, tampering, and exactly three skills. Bundle integrity and whitespace
+  checks passed. No new test infrastructure was added.
+- The revised YAML example parsed successfully. Static checks covered `main`/`demo`
+  and a substituted `trunk`/`live` mapping: only the selected default branch has a
+  push trigger, the live stage is explicit, OIDC and Node/Bun setup remain, deploys
+  serialize, and outcomes other than `succeeded` fail the final step. This is not
+  a newly executed GitHub deployment. Authored relative links and anchors resolve.
+- The separate nine-file `prisma-0.4.1-dev.3-preview.zip` matches the rebuilt bundle
+  byte-for-byte. SHA-256:
+  `ffad7c8d6a3306cb078b58574e80a7698c3d0455d5c90570565c182f2f5f7ab7`.
+- The refreshed local `prisma-preview` is enabled at `0.4.1-dev.3`. All nine
+  installed files match, including all three skills and both authored references.
+  Manifest comparison confirmed that only its version changed; branding, prompts,
+  listing copy, and data-use restrictions were retained.
+- Composer `0.21.0` remains byte-for-byte unchanged at SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+  The saved submission archive retains SHA-256
+  `ad755a35a96fe9130251f3ca716fd122389556d6e81179cb2edba57fe765f225`.
+  Earlier archives remain intact; the OpenAI submission was not accessed or edited.
+
 ## GitHub handoff retest `0.4.1-dev.2` (2026-09-29)
 
 After deployment of [the personal-installation connection fix](https://github.com/prisma/pdp-control-plane/pull/5488),

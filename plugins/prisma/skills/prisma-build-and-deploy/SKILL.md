@@ -47,9 +47,10 @@ to the unified Prisma CLI for new interactive projects.
   an existing app. If it is not Composer-ready, explain the concrete adaptation
   needed before undertaking a substantial rewrite.
 - Resolve Node and the package-manager executable together, plus Bun when used.
-  Check paths and versions against package requirements and project pins. Preserve
-  the selected executables across install, build, dev, and deploy; recheck them
-  when commands switch execution contexts. Use available host capabilities to
+  Before install, build, or deploy, verify their paths and versions in the actual
+  execution context against package requirements and project pins. Preserve the
+  selected executables across install, build, dev, and deploy; repeat this check
+  before work in a new execution context. Use available host capabilities to
   supply supported tooling and install project-local dependencies yourself.
   Explain progress or genuine blockers in plain language; the user should not
   need to open a terminal, run commands, or configure credentials.
@@ -114,6 +115,9 @@ data survives an actual service restart without resetting its database; exiting
 the dev CLI alone is not proof that its service stopped. Check the actual UI in a
 browser and inspect failures in the running service. For a different app, test
 the equivalent core user action and persistence when relevant.
+Use the shared [verification guidance](references/toolchain.md#verification-and-live-recovery)
+for bounded requests, retained test identity, and writable evidence paths. Claim
+only the persistence or application change actually tested.
 
 Local Composer development does not need cloud credentials. Keep building and
 testing locally when cloud login or target selection is still pending. Report
@@ -140,13 +144,17 @@ must not block their normal path. MCP authentication does not authenticate the C
 On failure:
 
 - Record the failed step, reported error, resolved target, and available resource
-  IDs. Check whether an existing version is still serving traffic, whether a new
-  version is live, or whether nothing is serving. Do not infer this from the
-  failure alone.
+  IDs. Inspect deployment state, relevant logs, and a database-backed request when
+  applicable to establish what is serving. A running process or static health check
+  alone does not establish application health. Do not routinely stop/start a live
+  version to troubleshoot database failures.
 - Preserve the app configuration, deployment identity, and recorded deploy state.
-  Explain what exists and what remains incomplete. Fix the reported cause before
-  retrying the same target so Composer can converge existing resources. If state
-  cannot be verified, stop and investigate instead of creating a renamed app.
+  After an evidence-supported fix, redeploy the same target through its established
+  path, using GitHub when configured; verify routing, live version, and application
+  behavior again. If safe recovery is unclear, preserve resources and report the
+  unresolved condition. Do not guess promotions, replace resources, or introduce
+  speculative database connection workarounds. Follow the reference for observed
+  idle failures; one successful retry does not prove lasting recovery.
 - A quota or entitlement refusal needs resolution, not a retry loop. Do not
   guess the quota amount or limit from a generic `quota-exceeded` error.
 - Treat cleanup as a separate action requiring the user's intent. Do not delete
@@ -165,5 +173,5 @@ automatic updates?"** Skip this when already configured or declined in the curre
 journey. Do not start GitHub setup merely because an app was requested. If accepted,
 explicitly hand off to [Prisma GitHub Deploy](../prisma-github-deploy/SKILL.md),
 carrying the existing app folder, workspace/project IDs, region, live stage, and
-verified URL. That skill owns repository saving, connection, and branch previews;
+verified URL. That skill owns repository saving, connection, and automatic updates;
 do not recreate those procedures here.

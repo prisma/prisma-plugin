@@ -11,10 +11,16 @@ Inspect `git status`, current branch, remotes, tracked/ignored files, lockfile,
 Composer application name/configuration, and workflows before making changes.
 Use available GitHub integration or `gh auth status` to establish access; supported
 browser sign-in is handled by the agent, never by asking for a token in chat.
+Before declaring that authentication is invalid, establish supported network and
+credential-store access in that execution context and retry the read there. A
+sandbox/keychain-access failure does not establish that the user must log in.
 For a new repository, check the approved owner/name does not already exist, create
 it privately, and push reviewed source with normal Git operations. Include neither
 generated deploy reports/state nor local `AGENTS.md` test instructions. Preserve
 legitimate repository instructions in an existing app; inspect their purpose first.
+For save-only requests, stop after saving; do not run connection or deployment
+steps. If an existing workflow would deploy the push, clarify a non-deploying
+destination before pushing rather than silently disabling that workflow.
 
 The app's CLI can inspect the target without changing its local binding:
 
@@ -54,12 +60,17 @@ The released action requires Bun **1.3.10+** and unified `prisma` with top-level
 `deploy` (rc.8 or later); it uses the project's `prisma` devDependency. Retain that
 dependency so the action does not fetch its older fallback CLI. Supply compatible
 Node, package manager, and Bun explicitly. Preserve exact project pins when present;
-report incompatibility rather than silently upgrading. For npm, use `npm ci`;
-pnpm/yarn need their existing setup and explicit frozen-lockfile install commands.
+verify the selected executables before work in each new execution context as
+described in the shared toolchain reference. Report incompatibility rather than
+silently upgrading. For npm, use `npm ci`; pnpm/yarn need their existing setup and
+explicit frozen-lockfile install commands.
 
 Adapt this **npm/Bun example** to the app. The runtime values match the pilot, not
-a mandate to replace another app's compatible versions. Replace every `demo` with
-the verified live stage if different. Keep the Composer module/config names and
+a mandate to replace another app's compatible versions. Read the default branch
+from GitHub's repository settings; the local checked-out branch is not proof.
+Replace the example's
+`main` push filter with the repository's actual default branch and every `demo`
+with the verified live stage if different. Keep the Composer module/config names and
 region that already select the deployed project. In a monorepo, also adapt action
 `working-directory`, install/build paths, and Node's `cache-dependency-path`.
 
@@ -67,14 +78,14 @@ region that already select the deployed project. In a monorepo, also adapt actio
 name: Deploy to Prisma
 on:
   push:
-    branches: ['**']
+    branches: ['main']
 
 permissions:
   contents: read
   id-token: write
 
 concurrency:
-  group: prisma-deploy-${{ github.event.repository.default_branch == github.ref_name && 'demo' || github.ref_name }}
+  group: prisma-deploy-demo
   cancel-in-progress: false
 
 jobs:
@@ -82,16 +93,6 @@ jobs:
     if: github.event.deleted == false
     runs-on: ubuntu-latest
     steps:
-      - name: Protect the live stage
-        env:
-          BRANCH: ${{ github.ref_name }}
-          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
-          LIVE_STAGE: demo
-        run: |
-          if [ "$BRANCH" != "$DEFAULT_BRANCH" ] && [ "$BRANCH" = "$LIVE_STAGE" ]; then
-            echo 'This branch name conflicts with the live stage. Rename the branch.'
-            exit 1
-          fi
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
@@ -107,7 +108,7 @@ jobs:
           install-command: npm ci
           build-command: npm run typecheck && npm run build
           module: module.ts
-          stage: ${{ github.event.repository.default_branch == github.ref_name && 'demo' || github.ref_name }}
+          stage: demo
       - name: Require a deployment
         if: steps.deploy.outputs.outcome != 'succeeded'
         run: |
@@ -117,44 +118,45 @@ jobs:
 
 Preserve real build/typecheck scripts; do not invent commands an app lacks. Action
 deployment runs under Bun independently of how the app builds. Never put untrusted
-branch names directly into shell source; expressions above enter environment/input
-values. Use no `pull_request` deployment trigger or `pull_request_target` workaround.
-Fork PRs do not automatically get previews: only authorized branch pushes to the
-connected repository are covered. No long-lived `PRISMA_SERVICE_TOKEN` is needed.
+branch names directly into shell source. Add no `pull_request` deployment trigger
+or `pull_request_target` workaround.
+New setup deploys only the selected default branch; it does not configure or test
+branch previews. Preserve existing appropriate workflows and preview configuration
+instead of narrowing them automatically. No long-lived `PRISMA_SERVICE_TOKEN` is needed.
 
 Per-target concurrency prevents overlapping runs; GitHub may supersede a pending
 run while an active deploy finishes. Other deployment workflows must use the same
 concurrency group or be consolidated with the user's established workflow. Do not
-disable unrelated checks. For branch names that normalize to the same platform
-target, resolve the conflict before deployment; do not overwrite another preview.
+disable unrelated checks. Recheck the push filter if the repository's default
+branch changes; a literal filter does not follow a rename automatically.
 
 Default action stage inference uses production, so pass the explicit stage to
-preserve a live `demo` application. A feature branch named `demo` must be rejected
-before deploying. Do not delete such a conflicting branch while it is connected
-without checking its platform mapping: branch deletion can trigger cleanup.
-
-Connected repositories use the platform's branch-deletion cleanup. Do **not** add
-`mode: destroy`: it is unsupported by the current CLI. After an approved deletion,
-verify the preview's resources were removed and the live app remains intact; a
-deleted Git branch alone is not proof. A cleanup failure is a separate reported
-problem, not permission to delete resources manually.
+preserve a live `demo` application. Do not create demonstration branches or PRs,
+merge changes, or delete branches/resources as part of this setup.
 
 ## Evidence and recovery
 
-Inspect the specific workflow run, commit SHA, action outcome, reported build ID,
-and resulting Prisma service/version. `skipped-no-credential` is a successful
-GitHub exit without a deployment; the final guard makes this visible as incomplete
-setup. Check App access, project/repository mapping and `id-token: write` before
+The workflow-configuration commit can trigger verification without an application
+change. Inspect that specific run and head SHA, action outcome, reported build ID,
+and resulting Prisma service/version; the most recent run may belong to an older
+commit. A successful no-op is acceptable when the deployed app already matches
+the commit; it proves convergence, not activation of a new application version.
+`skipped-no-credential` is a successful GitHub exit without a deployment; the final
+guard makes this visible as incomplete setup. Check App access, project/repository
+mapping and `id-token: write` before
 retrying. Keep authorization failures separate from network, build, quota, or
 startup failures. Do not replace OIDC with copied local credentials.
 
 Record baseline live IDs/URL and synthetic rows. Compare after the first GitHub
-deployment; a new service version is expected, a replacement live database or
-project is not. For a preview, confirm a different database/service and URL, then
-the same preview identities after its next push. Preserve browser cookies when
-checking a cookie-scoped Todo app so a new anonymous identity is not mistaken for
-data loss. Verify the browser as well as API/database behavior; retain evidence
+deployment; a new service version is possible, a replacement live database or
+project is not. Preserve browser cookies when checking a cookie-scoped Todo app so
+a new anonymous identity is not mistaken for data loss. Verify the browser as well
+as API/database behavior; retain evidence
 outside the published source if it contains session identifiers or logs.
+Use the shared [verification and live recovery](../../prisma-build-and-deploy/references/toolchain.md#verification-and-live-recovery)
+instructions for bounded requests, test-artifact handling, and failures. Reuse
+successful-run evidence for an already-complete setup rather than forcing another
+push. Do not change application behavior to demonstrate this workflow.
 
 Primary references: [deploy on push](https://www.prisma.io/docs/compute/deploy-on-push),
 [GitHub connection](https://www.prisma.io/docs/compute/github),

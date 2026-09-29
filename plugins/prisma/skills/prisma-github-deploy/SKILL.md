@@ -2,7 +2,7 @@
 name: prisma-github-deploy
 description: >-
   Save a Prisma Composer app to GitHub, connect its existing Prisma project,
-  and enable or diagnose automatic deployments and branch previews. Use when
+  and enable or diagnose default-branch automatic deployments. Use when
   the user accepts "Save your app to GitHub and enable automatic updates?" or
   directly requests this setup, including resuming an interrupted connection.
   Do not start GitHub setup for an ordinary build/deploy request, unrelated Git
@@ -16,8 +16,14 @@ saving, project connection, and verified GitHub deployments. Use the existing
 [build-and-deploy workflow](../prisma-build-and-deploy/SKILL.md) for local setup,
 authentication, and application verification, and its Composer reference for APIs.
 Read [GitHub deployment details](references/github-deploy.md) before configuring CI.
-If the live target has not been established, finish that journey first and resume
-this request afterward. Do not add unrelated PR-management or migration work.
+For automatic deployments, establish a missing live target through that journey
+first. A save-only request needs no cloud deployment or Prisma connection.
+Do not add unrelated PR-management or migration work.
+
+Accepting the build workflow's combined offer authorizes saving, connection, and
+automatic-update setup. Honor an explicit save-only or no-deploy request: save
+the source and finish without connecting or enabling deployments. Do not turn
+setup into a branch-preview demonstration or invent an application change.
 
 The agent works locally in the desktop app; GitHub Actions executes the resulting
 workflow remotely. Browser/cloud agent execution remains unsupported. Handle
@@ -35,8 +41,9 @@ need no extra questionnaire. Preserve secret redaction during diagnostics.
 
 - Inspect Git state, remotes, package manifest, lockfile, Composer configuration,
   and existing workflows. Preserve the user's uncommitted work and app conventions.
-  Confirm the authenticated Prisma workspace and deployed project by ID, live
-  stage, region, service/database IDs, URL, and a non-sensitive persistence sample.
+  For automatic updates, confirm the authenticated Prisma workspace and deployed
+  project by ID, live stage, region, service/database IDs, and URL; retain a
+  non-sensitive persistence sample for verification.
   Resolve ambiguity before pushing or connecting; never infer identity from a
   matching display name alone.
 - Reuse an appropriate existing repository. Otherwise propose an app-derived
@@ -46,9 +53,11 @@ need no extra questionnaire. Preserve secret redaction during diagnostics.
 - Save source, Composer configuration, and the lockfile. Review the exact staged
   files and diff first; exclude secrets, local auth, deployment state/reports, logs,
   and private test instructions. Do not commit an entire directory blindly.
-  Record repository, Prisma workspace/project IDs, live stage/URL, region, and
-  deployment behavior in the app's existing documentation, without credentials
-  or machine-specific paths. Keep established dependency/runtime pins.
+  Record the repository and known workspace/project IDs, stage, region, live URL,
+  and deployment behavior in existing app documentation, without credentials or
+  machine-specific paths. Keep dependency/runtime pins. For save-only requests,
+  finish here without connecting, adding automation, or triggering a workflow;
+  clarify before pushing if saving to that branch would itself deploy.
 
 ## Connect the existing Prisma project
 
@@ -69,29 +78,29 @@ resume with the same repository/project. Do not restart by provisioning replacem
 
 Adapt the reference's workflow using `prisma/cloud-deploy-action@v1.7.0`, GitHub
 OIDC, and compatible Node/Bun runtimes. Preserve existing install/build conventions;
-inspect other workflows to avoid duplicate deployments. Deploy branch pushes only:
-the default branch must update the existing live stage (including `demo`), and
-other branches get isolated stages named after their branches. Guard live-stage
-name collisions and serialize runs per target. Branch deletion uses platform
-cleanup, not an action `destroy` job. A green `skipped-no-credential` run means
-setup is incomplete, not deployed.
+inspect other workflows to avoid duplicate deployments. For new automation,
+deploy pushes to the repository's actual default branch to the existing live
+stage (including `demo`) and serialize runs per target. Preserve appropriate
+existing workflows, including their previews; do not replace them just to match
+the example. A green `skipped-no-credential` run means setup is incomplete.
 
-First verify an unchanged-code deployment updates the same live resources and
-preserves sample data. Then, within the user's authorized test scope, push a
-harmless feature change and open a PR; verify a separate preview URL and database,
-and unchanged live data. A second push must update that preview rather than create
-duplicate resources. Keep PR merges and branch deletion under the user's control;
-after approval, verify the live update and preview cleanup respectively. Do not
-describe pending merge/cleanup checks as passed.
+Verify the deployment triggered by committing the workflow, leaving application
+behavior unchanged. Match its commit and successful outcome to the same live
+resources and preserved sample data. A successful no-op is valid when the deployed
+app already matches that commit; do not manufacture a feature or new version to
+prove an update. If setup is already complete, reuse matching successful-run
+evidence and check the current app instead of creating another deployment.
 
 Confirm the workflow's commit, deployment/build result, live service version, URL,
 database-backed behavior, and browser result before saying automation is ready.
-Use the original app's persistence/verification approach; never seed previews by
-copying production data. Report partial progress and a specific failing step for
-denied access, missing OIDC credentials, quota, build, or startup failures. Preserve
-connections and state while fixing the cause; no automatic destructive recovery.
+Follow the shared [verification and recovery guidance](../prisma-build-and-deploy/references/toolchain.md#verification-and-live-recovery)
+and the app's existing persistence checks. Report partial progress and a specific
+failing step for denied access, missing OIDC credentials, quota, build, or startup
+failures. Preserve connections and state while fixing the cause; no automatic
+destructive recovery.
 Optional MCP diagnostics follow the existing workflow's identity and data-use rules.
 
-Finish with repository, workflow/PR, live app, and verified preview links. Explain
-that merging approved changes into the default branch updates the live app, while
-other branches are previews; mention any checks or consent still outstanding.
+Finish with repository, successful workflow-run, and live-app links. Explain that
+default-branch updates deploy automatically and state any incomplete checks. For
+save-only requests, report only the saved repository. Finish setup here: do not
+add demonstration features, PRs, extra preview pushes, merges, or branch cleanup.

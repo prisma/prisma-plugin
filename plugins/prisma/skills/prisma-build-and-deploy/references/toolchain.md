@@ -63,8 +63,10 @@ Use project-local commands and inspect `prisma --help`, `prisma dev --help`, and
 `prisma dev module.ts` and `prisma deploy module.ts`; there is no `composer`
 command group. Preserve the selected Node/package-manager pair, including PATH
 and child processes, across installation, build, dev, and deploy. When commands
-switch shell, sandbox, or network-access contexts, recheck there or inspect the
-failing command's runtime in its logs; an earlier version check is insufficient.
+switch shell, sandbox, network-access context, or CI runner, check the selected
+executables in that context before installing, building, or deploying. An earlier
+version check is insufficient. If a process still uses a different runtime,
+inspect its child-process environment/logs before retrying with the selected pair.
 Resolve DNS or network-access failures through the host's supported access path,
 not dependency overrides. Investigate resolution errors before changing versions.
 
@@ -157,6 +159,49 @@ Those credential paths are technical context, not a fallback for this novice
 journey. Web/cloud agent execution, including desktop-launched cloud tasks, is deferred;
 direct the user to desktop-local execution without manual credential workarounds.
 
+## Verification and live recovery
+
+Give generated HTTP checks a finite timeout: **30 seconds per request by default**
+(for example, `curl --max-time 30` or `AbortSignal.timeout(30000)`). Keep any retries
+bounded. Inspect status and response format/content type before parsing JSON;
+report a timeout, transport error, or non-JSON error response as such. A parser
+exception or failed assertion in the test script is not itself an application
+failure. Capture the underlying result without printing credentials or sensitive
+content, and fix the check before drawing conclusions.
+
+Create an explicit, writable test-artifact directory outside Git before testing.
+Use absolute paths and verify the process can write there; do not rely on a
+previous working directory or shell variable surviving a context switch. Retain
+the test-session identity (such as a cookie jar) and created record IDs there as
+each operation succeeds, so an interrupted check remains diagnosable and only its
+own test data can be removed. Reuse that identity for cookie-scoped apps; a new
+anonymous session showing no rows is not evidence of data loss. Keep these files
+private and out of commits, published reports, and chat.
+
+Record the existing project, service, database, stage, URL, and non-sensitive
+persistence sample before redeployment; compare them afterward. A redeploy that
+retains data proves persistence across that redeployment, not an actual service
+restart. Resource reuse or a successful no-op does not prove changed application
+code became live. When code changed, correlate the deployed commit/build and live
+version with the expected behavior; otherwise report the unchanged app accurately.
+
+For a live database failure, inspect the failed operation, deployment state,
+relevant permitted logs, and a bounded database-backed request. Check routing and
+the live version as well as the process state: a static `/health` response or a
+running process cannot establish database-backed application health. Preserve
+deployment state and resources. Do not routinely stop/start the live version,
+guess a promotion, create replacements, or adopt an unproven connection recipe.
+After a supported fix, redeploy the same target through the established path
+(GitHub when configured), then verify its route, live version, core database-backed
+action, sample data, and browser behavior. If safe recovery is unclear, report the
+specific unresolved condition and preserved resources rather than attempting
+further mutations.
+
+After an observed idle-related failure, repeat the relevant idle condition and
+database-backed request before claiming a lasting fix. If that condition has not
+been retested, report immediate recovery and the remaining uncertainty. Do not
+add extended idle testing to every ordinary build.
+
 ## Optional MCP diagnostics
 
 The marketplace submission connects the existing remote server at
@@ -200,6 +245,17 @@ redact secrets before sharing.
 See the [official tool reference](https://www.prisma.io/docs/ai/mcp-tools).
 
 ## Evidence before workarounds
+
+The agent-reported Daylist run on 2026-09-29 used CLI `8.0.0-rc.17`, Composer/cloud
+`0.21.0`, and Postgres.js `3.4.9`. It reported hanging database requests while
+`/health` returned 200, then loss of routing after stopping and starting the live
+version (`live: null` and HTTP 404 despite a running version). A same-target
+redeployment restored routing. This is version-specific reported evidence, not
+a reproduced general platform bug. The reported database workaround and immediate
+retry were not followed by a repeat of the idle condition; do not adopt that
+workaround or claim lasting reliability from it. Database idle behavior and
+stop/start routing semantics remain separate investigation follow-ups in the
+maintainer validation notes.
 
 The fresh Todo test reproduced `Cannot read properties of null (reading
 'edgesOut')` during installation with Node 23.11.0/npm 10.9.2. Selecting Node
