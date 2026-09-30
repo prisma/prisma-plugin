@@ -15,7 +15,8 @@ Before declaring that authentication is invalid, establish supported network and
 credential-store access in that execution context and retry the read there. A
 sandbox/keychain-access failure does not establish that the user must log in.
 For a new repository, check the approved owner/name does not already exist, create
-it privately, and push reviewed source with normal Git operations. Include neither
+it privately with default branch `main`, and push reviewed source with normal Git
+operations. Preserve an existing repository's default branch. Include neither
 generated deploy reports/state nor local `AGENTS.md` test instructions. Preserve
 legitimate repository instructions in an existing app; inspect their purpose first.
 For save-only requests, stop after saving; do not run connection or deployment
@@ -28,11 +29,16 @@ The app's CLI can inspect the target without changing its local binding:
 npm exec -- prisma auth whoami --json
 npm exec -- prisma project show PROJECT_ID --json
 npm exec -- prisma branch list --project PROJECT_ID --json
-npm exec -- prisma service show SERVICE_ID --project PROJECT_ID --branch LIVE_STAGE --json
-npm exec -- prisma postgres show DATABASE_ID --project PROJECT_ID --branch LIVE_STAGE --json
+npm exec -- prisma service show SERVICE_ID --project PROJECT_ID --branch LIVE_BRANCH --json
+npm exec -- prisma postgres show DATABASE_ID --project PROJECT_ID --branch LIVE_BRANCH --json
 ```
 
-Replace placeholders with verified IDs, not guesses. Project inspection does not
+Replace placeholders with verified identities, not guesses. `LIVE_BRANCH` is the
+actual branch used for inspection (normally `main` for production); this read flag
+does not imply a Composer `--stage` override. Retain production/default versus
+named targeting separately. Resolve the project link using the shared
+[deployment-link guidance](../../prisma-build-and-deploy/references/toolchain.md#deployment-links).
+Project inspection does not
 necessarily expose the GitHub connection. Check its repository setting through
 supported platform/Console inspection as well. Confirm both sides' repository
 identity (including numeric GitHub ID when available). If already linked elsewhere,
@@ -68,9 +74,13 @@ explicit frozen-lockfile install commands.
 Adapt this **npm/Bun example** to the app. The runtime values match the pilot, not
 a mandate to replace another app's compatible versions. Read the default branch
 from GitHub's repository settings; the local checked-out branch is not proof.
-Replace the example's
-`main` push filter with the repository's actual default branch and every `demo`
-with the verified live stage if different. Keep the Composer module/config names and
+This example targets production/default: replace its `main` push filter with the
+repository's actual default branch and omit `stage`. The pinned action maps a
+default-branch push to production, which uses the Prisma project's default branch;
+do not pass `stage: main`. For an existing named target such as `demo`, add
+`stage: demo` under the action's `with` and use `prisma-deploy-demo` for concurrency,
+preserving any established group. Never migrate a live target to fit this example.
+Keep the Composer module/config names and
 region that already select the deployed project. In a monorepo, also adapt action
 `working-directory`, install/build paths, and Node's `cache-dependency-path`.
 
@@ -85,7 +95,7 @@ permissions:
   id-token: write
 
 concurrency:
-  group: prisma-deploy-demo
+  group: prisma-deploy-production
   cancel-in-progress: false
 
 jobs:
@@ -108,7 +118,6 @@ jobs:
           install-command: npm ci
           build-command: npm run typecheck && npm run build
           module: module.ts
-          stage: demo
       - name: Require a deployment
         if: steps.deploy.outputs.outcome != 'succeeded'
         run: |
@@ -130,8 +139,9 @@ concurrency group or be consolidated with the user's established workflow. Do no
 disable unrelated checks. Recheck the push filter if the repository's default
 branch changes; a literal filter does not follow a rename automatically.
 
-Default action stage inference uses production, so pass the explicit stage to
-preserve a live `demo` application. Do not create demonstration branches or PRs,
+Keep the verified target kind across local and GitHub deployments: no stage override
+for production/default; an explicit stage for existing named targets such as `demo`.
+Do not create demonstration branches or PRs,
 merge changes, or delete branches/resources as part of this setup.
 
 ## Evidence and recovery

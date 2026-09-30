@@ -60,7 +60,12 @@ to the unified Prisma CLI for new interactive projects.
   their matching skill/documentation; do not downgrade it to the bundled version.
 - Choose a simple implementation suited to the request. Do not turn a small Todo
   request into a design interview. Make the schema and persistence approach
-  explicit; do not accidentally mix raw SQL initialization with ORM migrations.
+  explicit. New Composer apps requiring persistent application data must use
+  Prisma Postgres through Composer: local Postgres during development and managed
+  Prisma Postgres on deployment. Browser storage is suitable for preferences or
+  caches, never a substitute for database persistence. Static apps need no database.
+  Preserve existing apps' database approaches and explicit user choices; Prisma
+  ORM is optional. Do not mix raw SQL initialization with ORM migrations.
 
 ## Resolve authentication and the deployment target
 
@@ -90,10 +95,13 @@ work continues. Combine outstanding workspace and region questions when possible
    "Select the region closest to your users." Show the complete supported choices
    with geographic labels and IDs from the reference's region link; do not infer
    a recommendation from the developer's location.
-4. Resolve any ambiguous application/project identity. Preserve the requested
-   stage; a new demo defaults to `demo`. State the resolved target as a progress
-   update, not another approval request. Provision only after target selection and
-   local verification are complete. Omitting the stage targets production.
+4. Resolve any ambiguous application/project identity. For a new app without an
+   explicit target, use production on the project's default `main` branch: omit
+   `--stage`, never substitute `--stage main`. Preserve an existing or explicitly
+   requested named stage, including `demo`. Carry production/default versus named
+   targeting separately from the branch name. State the target as a progress
+   update, not another approval request; provision after target selection and
+   local verification. Do not rename branches, migrate data, or move existing apps.
 
 Check quota information only through an available supported read-only capability.
 Otherwise note briefly that deployment may still fail after creating resources;
@@ -134,6 +142,10 @@ action backed by the database when applicable, and a browser check. Use the
 project's supported service inspection commands to distinguish an allocated
 service from a live version. A zero exit code or created project is not enough.
 For Todo, check CRUD against the deployed application as well as locally.
+For a new default-target app, verify the service and any required database are on
+the project's default `main` branch. Trace application reads and writes to the provisioned
+database using the reference's persistence checks; browser refresh alone is not
+database evidence.
 
 Use the optional [MCP diagnostics](references/toolchain.md#optional-mcp-diagnostics)
 only to investigate a failure or an explicit diagnostic request. Match the MCP
@@ -160,18 +172,31 @@ On failure:
 - Treat cleanup as a separate action requiring the user's intent. Do not delete
   resources or deployment state as an automatic recovery step.
 
-Finish with the local/deployed URLs, what was actually verified, any remaining
-blocker, and material demo limitations (for example, cookie-only ownership or
+Finish every successful deployment with **Open your app** (verified live URL) and
+**Manage your Prisma project** (verified project URL), resolved as described in the
+reference. Include the local URL when available, what was actually verified, any
+remaining blocker, and material demo limitations (for example, cookie-only ownership or
 lack of cross-device access). If Console deployment history was unavailable,
 report it separately from the live result; do not create Git commits to suppress
 that warning. Keep unverified work clearly separate from success.
 
 ## Offer GitHub saving after success
 
-After the first verified deployment, offer: **"Save your app to GitHub and enable
-automatic updates?"** Skip this when already configured or declined in the current
-journey. Do not start GitHub setup merely because an app was requested. If accepted,
+After the first verified deployment, explain and offer:
+
+> Your app is live, but its source code is still on this computer. I recommend
+> saving a private copy to GitHub, an online home for your code and change history.
+> It also lets us work on changes separately before publishing them.
+>
+> Shall I save your code to GitHub and connect it to Prisma? Updates to the
+> repository's main branch will then automatically update your live app.
+
+Adapt this to the actual source location and repository default branch: do not
+claim code is only local when already saved on GitHub. Skip when already configured
+or declined in this journey. This offer does not promise application/database
+previews or start branch-development work. Do not start setup merely because an
+app was requested. If accepted,
 explicitly hand off to [Prisma GitHub Deploy](../prisma-github-deploy/SKILL.md),
-carrying the existing app folder, workspace/project IDs, region, live stage, and
-verified URL. That skill owns repository saving, connection, and automatic updates;
-do not recreate those procedures here.
+carrying the app folder, workspace/project IDs, region, production/default or named
+target, actual live branch, and both verified links. That skill owns repository
+saving, connection, and automatic updates; do not recreate those procedures here.

@@ -38,6 +38,13 @@ schema strategy. Add the app's own build/typecheck/runtime dependencies as neede
 and retain its lockfile. Do not use `--legacy-peer-deps` or `--force` as default
 installation instructions.
 
+For new apps with persistent application data, declare and wire Prisma Postgres
+through Composer using the bundled database concepts. Composer dev supplies local
+Postgres without cloud login; the cloud target provisions managed Prisma Postgres.
+Use the binding supplied to the service rather than a browser-storage fallback or
+an unrelated connection string. This does not mandate ORM or a particular driver;
+preserve existing apps and explicit database choices. A static app needs no database.
+
 The core package does not supply the `prisma-composer` executable. That executable
 belongs to `@prisma/composer-cli`. The unified `prisma` package supplies the
 `prisma` executable and brings its own Composer CLI dependency; do not force all
@@ -78,7 +85,7 @@ npm run build
 npm exec -- prisma dev module.ts
 # Verify the app locally; stop dev when done.
 # Deploy only once local verification and target selection are complete.
-npm exec -- prisma deploy module.ts --stage demo --report deploy-report.json
+npm exec -- prisma deploy module.ts --report deploy-report.json
 ```
 
 Start the authentication/target checks below early when deployment is requested;
@@ -143,9 +150,27 @@ recovery; acceptance tests must use isolated credential storage.
 Read the complete supported region list in [Compute limitations](https://www.prisma.io/docs/compute/limitations)
 (the `.md` version is available for text retrieval). Configure the selected region
 through `prismaCloud({ region })` or `PRISMA_REGION`; config wins if both are set.
-An existing project retains its region. Use `--stage demo` for a new demo; omitting
-it targets production. The module's application name selects the project; inspect
-`--name` for an explicit override. Reuse the same name and stage on retries.
+An existing project retains its region. For a new app without an explicit target,
+omit `--stage`: production uses the project's default branch, `main` for a new
+project. Do not use `--stage main` as a substitute; a named-stage deployment has
+different state/target semantics. Inspect `project show` and `branch list` plus
+the report to verify the actual project/default branch and its service/database.
+Preserve an existing or requested named target with its explicit `--stage`, such
+as `--stage demo`; do not rename branches or move data to align with GitHub.
+The module's application name selects the project; inspect `--name` for an explicit
+override. Retain the name, target kind, and any stage override on retries.
+
+### Deployment links
+
+Return **Open your app** from the verified live service URL and **Manage your
+Prisma project** from the authenticated platform's actual project page. Match its
+workspace/project IDs to the deploy report and remote inspection. Use a link
+returned by a supported platform surface or navigate to the matching project in
+Console and verify the address and identity. If that surface supports a branch
+deep link, verify it too; otherwise use the project page and name the deployed
+branch alongside it. Never invent a route or substitute the Console homepage.
+If the project link cannot be verified, report that handoff as incomplete rather
+than presenting an unverified link. Carry both links through GitHub setup.
 
 For GitHub deployment automation, follow [Prisma GitHub Deploy](../../prisma-github-deploy/SKILL.md)
 and its OIDC guidance; do not ask the user to copy a service token into GitHub.
@@ -160,6 +185,14 @@ journey. Web/cloud agent execution, including desktop-launched cloud tasks, is d
 direct the user to desktop-local execution without manual credential workarounds.
 
 ## Verification and live recovery
+
+For persistent apps, verify the service's Composer database binding matches the
+provisioned database and that API/UI writes are read back through that binding.
+Use a supported database read to confirm a synthetic record when available,
+without exposing credentials. Retain record IDs for the restart/redeploy checks.
+Browser refresh or local storage survival alone is insufficient; for a new default
+deployment confirm both service and database belong to the project's default `main`
+branch. Preserve existing database strategies and targets in existing applications.
 
 Give generated HTTP checks a finite timeout: **30 seconds per request by default**
 (for example, `curl --max-time 30` or `AbortSignal.timeout(30000)`). Keep any retries
@@ -286,12 +319,13 @@ In an npm project, the tested recovery invocation is:
 
 ```sh
 npm install --save-dev --save-exact bun@1.4.2
-# Keep the previously resolved workspace, region, application name, and stage.
-./node_modules/.bin/bun run --bun prisma deploy module.ts --stage demo --report deploy-retry-report.json
+# Production/default target; retain an explicit --stage only for a named target.
+./node_modules/.bin/bun run --bun prisma deploy module.ts --report deploy-retry-report.json
 ```
 
-Replace `demo` with the already resolved stage if different; preserve the region
-in configuration or `PRISMA_REGION`. Bun's [`--bun` option](https://bun.com/docs/runtime/bunfig#run-bun)
+For the historical `demo` target above, retain `--stage demo`; for production,
+keep it omitted. Preserve the resolved target and region in configuration or
+`PRISMA_REGION`. Bun's [`--bun` option](https://bun.com/docs/runtime/bunfig#run-bun)
 also routes child `node` commands through Bun. Verify the parent and relevant
 child runtime when diagnosing this error; running only the parent CLI with Bun
 does not establish what its children use. This is a conditional recovery verified

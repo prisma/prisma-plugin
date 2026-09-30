@@ -16,7 +16,7 @@ manifest lives in `plugins/prisma/plugin.json`. It includes three skills:
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The local development preview is **`0.4.1-dev.3`**. New projects use
+The local development preview is **`0.4.1-dev.4`**. New projects use
 `prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
 back to ChatGPT. The agent handles commands and connection verification; existing
 apps keep their toolchains and use standard sign-in if their CLI lacks the option.
@@ -52,7 +52,7 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Confirm the installed version is `0.4.1-dev.3`. In the ChatGPT
+Codex's cache. Confirm the installed version is `0.4.1-dev.4`. In the ChatGPT
 desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
 with the updated skills. Confirm that
 `prisma:prisma-build-and-deploy`, `prisma:prisma-github-deploy`, and
@@ -95,9 +95,13 @@ authenticated identity and remote workspace access, then reuses the authorized
 workspace unless another was explicitly requested. Browser signup alone is not
 proof of a working connection. Local work continues while login is pending.
 
-Installing this plugin does not deploy or provision anything. A new demo targets the named `demo` stage
-unless another target is requested. The workflow checks the live app, and reports
-partial provisioning separately from a successful deployment.
+Installing this plugin does not deploy or provision anything. New persistent apps
+use Prisma Postgres through Composer, locally and on deployment; browser storage
+is only for preferences or caches. Static apps need no database, and existing
+apps retain their database choices. New apps use production on the default `main`
+branch without a stage override. Existing named targets such as `demo` are retained.
+The handoff includes verified **Open your app** and **Manage your Prisma project**
+links, and reports partial provisioning separately from success.
 Service-token setup is not a workaround for unsupported web/cloud execution.
 
 See [validation and upstream findings](docs/validation.md) for the acceptance
@@ -105,9 +109,18 @@ scenarios, recorded evidence, and remaining limits of this preview.
 
 ### Save to GitHub and enable updates
 
-After a verified first deployment, the build workflow offers **“Save your app to
-GitHub and enable automatic updates?”** Acceptance hands off to the GitHub
-skill. You can also request this directly for an existing deployed Composer app.
+After a verified first deployment, the build workflow explains the next step:
+
+> Your app is live, but its source code is still on this computer. I recommend
+> saving a private copy to GitHub, an online home for your code and change history.
+> It also lets us work on changes separately before publishing them.
+>
+> Shall I save your code to GitHub and connect it to Prisma? Updates to the
+> repository's main branch will then automatically update your live app.
+
+It adapts this wording to the actual source location and default branch.
+Acceptance hands off to the GitHub skill. You can also request this directly for
+an existing deployed Composer app.
 The agent confirms a repository destination (private by default), saves reviewed
 source, and connects it to the existing Prisma project. GitHub login for saving
 code and Prisma GitHub App access for deployment are separate browser steps.
@@ -115,11 +128,14 @@ An explicit save-only request saves the code without enabling or triggering depl
 
 The reference pins `prisma/cloud-deploy-action@v1.7.0` with GitHub OIDC. New
 automation deploys pushes to the repository's actual default branch to the existing
-live stage, including `demo`. Appropriate existing workflows, including previews,
+target. Production/default deployments omit the stage override; existing named
+targets such as `demo` keep their explicit mapping. New repositories use `main`.
+Appropriate existing workflows, including previews,
 are preserved. Missing-credential outcomes mean incomplete setup, even when the
 GitHub run is green. The workflow-configuration commit verifies automatic updates
 without changing app behavior; a successful no-op is acceptable. Setup finishes
-with repository, successful run, and live-app links, without a demonstration PR.
+with repository, successful run, live-app, and Prisma project links, without a
+demonstration PR or application/database preview promise.
 GitHub Actions runs remotely, while the agent still works in a desktop-local task.
 
 Shared guidance checks runtimes before work in each execution context, bounds

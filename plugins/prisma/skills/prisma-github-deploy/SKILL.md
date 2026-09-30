@@ -3,7 +3,8 @@ name: prisma-github-deploy
 description: >-
   Save a Prisma Composer app to GitHub, connect its existing Prisma project,
   and enable or diagnose default-branch automatic deployments. Use when
-  the user accepts "Save your app to GitHub and enable automatic updates?" or
+  the user accepts the offer to save their code to GitHub and connect it to Prisma
+  for automatic updates, accepts the shorter GitHub-saving offer, or
   directly requests this setup, including resuming an interrupted connection.
   Do not start GitHub setup for an ordinary build/deploy request, unrelated Git
   work, or a request to deploy an app before a live target has been established.
@@ -42,18 +43,21 @@ need no extra questionnaire. Preserve secret redaction during diagnostics.
 - Inspect Git state, remotes, package manifest, lockfile, Composer configuration,
   and existing workflows. Preserve the user's uncommitted work and app conventions.
   For automatic updates, confirm the authenticated Prisma workspace and deployed
-  project by ID, live stage, region, service/database IDs, and URL; retain a
+  project by ID, production/default versus named target, actual live branch,
+  region, service/database IDs, and both verified app/project links; retain a
   non-sensitive persistence sample for verification.
   Resolve ambiguity before pushing or connecting; never infer identity from a
   matching display name alone.
 - Reuse an appropriate existing repository. Otherwise propose an app-derived
   name, default to private visibility, and confirm owner/destination unless already
-  specified. Check access and existing contents before creating or pushing. Never
+  specified. New repositories use `main` as the default branch; preserve an
+  existing repository's default branch. Check access and contents before pushing. Never
   replace a remote, force-push, or overwrite repository contents to resolve a conflict.
 - Save source, Composer configuration, and the lockfile. Review the exact staged
   files and diff first; exclude secrets, local auth, deployment state/reports, logs,
   and private test instructions. Do not commit an entire directory blindly.
-  Record the repository and known workspace/project IDs, stage, region, live URL,
+  Record the repository and known workspace/project IDs, target kind and branch,
+  region, verified app/project links,
   and deployment behavior in existing app documentation, without credentials or
   machine-specific paths. Keep dependency/runtime pins. For save-only requests,
   finish here without connecting, adding automation, or triggering a workflow;
@@ -79,8 +83,11 @@ resume with the same repository/project. Do not restart by provisioning replacem
 Adapt the reference's workflow using `prisma/cloud-deploy-action@v1.7.0`, GitHub
 OIDC, and compatible Node/Bun runtimes. Preserve existing install/build conventions;
 inspect other workflows to avoid duplicate deployments. For new automation,
-deploy pushes to the repository's actual default branch to the existing live
-stage (including `demo`) and serialize runs per target. Preserve appropriate
+deploy pushes only to the repository's actual default branch. For a verified
+production/default target, omit the action's stage input; do not set `stage: main`.
+For an existing named stage such as `demo`, retain its explicit stage mapping.
+Serialize runs per target. Never relocate existing resources to match a branch
+name. Preserve appropriate
 existing workflows, including their previews; do not replace them just to match
 the example. A green `skipped-no-credential` run means setup is incomplete.
 
@@ -100,7 +107,9 @@ failures. Preserve connections and state while fixing the cause; no automatic
 destructive recovery.
 Optional MCP diagnostics follow the existing workflow's identity and data-use rules.
 
-Finish with repository, successful workflow-run, and live-app links. Explain that
+Finish with repository and successful workflow-run links, **Open your app**, and
+**Manage your Prisma project**, retaining the verified deployment links and branch.
+Explain that
 default-branch updates deploy automatically and state any incomplete checks. For
 save-only requests, report only the saved repository. Finish setup here: do not
 add demonstration features, PRs, extra preview pushes, merges, or branch cleanup.
