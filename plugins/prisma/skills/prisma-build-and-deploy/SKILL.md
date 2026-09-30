@@ -47,9 +47,10 @@ to the unified Prisma CLI for new interactive projects.
   an existing app. If it is not Composer-ready, explain the concrete adaptation
   needed before undertaking a substantial rewrite.
 - Resolve Node and the package-manager executable together, plus Bun when used.
-  Check paths and versions against package requirements and project pins. Preserve
-  the selected executables across install, build, dev, and deploy; recheck them
-  when commands switch execution contexts. Use available host capabilities to
+  Before install, build, or deploy, verify their paths and versions in the actual
+  execution context against package requirements and project pins. Preserve the
+  selected executables across install, build, dev, and deploy; repeat this check
+  before work in a new execution context. Use available host capabilities to
   supply supported tooling and install project-local dependencies yourself.
   Explain progress or genuine blockers in plain language; the user should not
   need to open a terminal, run commands, or configure credentials.
@@ -59,7 +60,12 @@ to the unified Prisma CLI for new interactive projects.
   their matching skill/documentation; do not downgrade it to the bundled version.
 - Choose a simple implementation suited to the request. Do not turn a small Todo
   request into a design interview. Make the schema and persistence approach
-  explicit; do not accidentally mix raw SQL initialization with ORM migrations.
+  explicit. New Composer apps requiring persistent application data must use
+  Prisma Postgres through Composer: local Postgres during development and managed
+  Prisma Postgres on deployment. Browser storage is suitable for preferences or
+  caches, never a substitute for database persistence. Static apps need no database.
+  Preserve existing apps' database approaches and explicit user choices; Prisma
+  ORM is optional. Do not mix raw SQL initialization with ORM migrations.
 
 ## Resolve authentication and the deployment target
 
@@ -89,10 +95,13 @@ work continues. Combine outstanding workspace and region questions when possible
    "Select the region closest to your users." Show the complete supported choices
    with geographic labels and IDs from the reference's region link; do not infer
    a recommendation from the developer's location.
-4. Resolve any ambiguous application/project identity. Preserve the requested
-   stage; a new demo defaults to `demo`. State the resolved target as a progress
-   update, not another approval request. Provision only after target selection and
-   local verification are complete. Omitting the stage targets production.
+4. Resolve any ambiguous application/project identity. For a new app without an
+   explicit target, use production on the project's default `main` branch: omit
+   `--stage`, never substitute `--stage main`. Preserve an existing or explicitly
+   requested named stage, including `demo`. Carry production/default versus named
+   targeting separately from the branch name. State the target as a progress
+   update, not another approval request; provision after target selection and
+   local verification. Do not rename branches, migrate data, or move existing apps.
 
 Check quota information only through an available supported read-only capability.
 Otherwise note briefly that deployment may still fail after creating resources;
@@ -114,6 +123,9 @@ data survives an actual service restart without resetting its database; exiting
 the dev CLI alone is not proof that its service stopped. Check the actual UI in a
 browser and inspect failures in the running service. For a different app, test
 the equivalent core user action and persistence when relevant.
+Use the shared [verification guidance](references/toolchain.md#verification-and-live-recovery)
+for bounded requests, retained test identity, and writable evidence paths. Claim
+only the persistence or application change actually tested.
 
 Local Composer development does not need cloud credentials. Keep building and
 testing locally when cloud login or target selection is still pending. Report
@@ -130,6 +142,10 @@ action backed by the database when applicable, and a browser check. Use the
 project's supported service inspection commands to distinguish an allocated
 service from a live version. A zero exit code or created project is not enough.
 For Todo, check CRUD against the deployed application as well as locally.
+For a new default-target app, verify the service and any required database are on
+the project's default `main` branch. Trace application reads and writes to the provisioned
+database using the reference's persistence checks; browser refresh alone is not
+database evidence.
 
 Use the optional [MCP diagnostics](references/toolchain.md#optional-mcp-diagnostics)
 only to investigate a failure or an explicit diagnostic request. Match the MCP
@@ -140,20 +156,47 @@ must not block their normal path. MCP authentication does not authenticate the C
 On failure:
 
 - Record the failed step, reported error, resolved target, and available resource
-  IDs. Check whether an existing version is still serving traffic, whether a new
-  version is live, or whether nothing is serving. Do not infer this from the
-  failure alone.
+  IDs. Inspect deployment state, relevant logs, and a database-backed request when
+  applicable to establish what is serving. A running process or static health check
+  alone does not establish application health. Do not routinely stop/start a live
+  version to troubleshoot database failures.
 - Preserve the app configuration, deployment identity, and recorded deploy state.
-  Explain what exists and what remains incomplete. Fix the reported cause before
-  retrying the same target so Composer can converge existing resources. If state
-  cannot be verified, stop and investigate instead of creating a renamed app.
+  After an evidence-supported fix, redeploy the same target through its established
+  path, using GitHub when configured; verify routing, live version, and application
+  behavior again. If safe recovery is unclear, preserve resources and report the
+  unresolved condition. Do not guess promotions, replace resources, or introduce
+  speculative database connection workarounds. Follow the reference for observed
+  idle failures; one successful retry does not prove lasting recovery.
 - A quota or entitlement refusal needs resolution, not a retry loop. Do not
   guess the quota amount or limit from a generic `quota-exceeded` error.
 - Treat cleanup as a separate action requiring the user's intent. Do not delete
   resources or deployment state as an automatic recovery step.
 
-Finish with the local/deployed URLs, what was actually verified, any remaining
-blocker, and material demo limitations (for example, cookie-only ownership or
+Finish every successful deployment with **Open your app** (verified live URL) and
+**Manage your Prisma project** (verified project URL), resolved as described in the
+reference. Include the local URL when available, what was actually verified, any
+remaining blocker, and material demo limitations (for example, cookie-only ownership or
 lack of cross-device access). If Console deployment history was unavailable,
 report it separately from the live result; do not create Git commits to suppress
 that warning. Keep unverified work clearly separate from success.
+
+## Offer GitHub saving after success
+
+After the first verified deployment, explain and offer:
+
+> Your app is live, but its source code is still on this computer. I recommend
+> saving a private copy to GitHub, an online home for your code and change history.
+> It also lets us work on changes separately before publishing them.
+>
+> Shall I save your code to GitHub and connect it to Prisma? Updates to the
+> repository's main branch will then automatically update your live app.
+
+Adapt this to the actual source location and repository default branch: do not
+claim code is only local when already saved on GitHub. Skip when already configured
+or declined in this journey. This offer does not promise application/database
+previews or start branch-development work. Do not start setup merely because an
+app was requested. If accepted,
+explicitly hand off to [Prisma GitHub Deploy](../prisma-github-deploy/SKILL.md),
+carrying the app folder, workspace/project IDs, region, production/default or named
+target, actual live branch, and both verified links. That skill owns repository
+saving, connection, and automatic updates; do not recreate those procedures here.

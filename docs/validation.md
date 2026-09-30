@@ -1,5 +1,393 @@
 # Plugin validation
 
+## Persistence and default-target handoff `0.4.1-dev.4` (2026-09-30)
+
+This revision changes four defaults: new persistent Composer apps use Prisma
+Postgres; successful handoffs return app and project links; new apps deploy to
+production on the default `main` branch without a stage override; and the GitHub
+offer explains local source, private code storage, change history, and automatic
+updates. Existing database choices, repositories, and named targets are preserved.
+Three skills, dependency pins, and packaging behavior remain unchanged.
+
+### Scenario reviews (not executed agent journeys)
+
+| Scenario | Reviewed outcome |
+| --- | --- |
+| New persistent Todo | Composer provisions/wires Postgres locally and in the cloud; app reads/writes must reach that database. Browser storage/refresh alone cannot pass persistence. |
+| Static app or local development without login | No unnecessary database for static content; Composer local Postgres and local verification do not require cloud login. |
+| Existing app or explicit database choice | Preserve database strategy, framework, toolchain, repository/default branch, and deployment target; do not mandate ORM or introduce a driver migration. |
+| New default deployment | Omit CLI `--stage` and action `stage`; verify service/database on the project's default `main` branch. Do not replace omission with `--stage main`. |
+| Existing named `demo` deployment | Preserve its explicit stage and workflow mapping, even when GitHub's default branch is `main` or `trunk`; never relocate resources. |
+| Deployment links | Match the live service URL and authenticated project page to workspace/project IDs. Verify a supported branch deep link or label the branch beside the project URL. An unresolved project link is an incomplete handoff. |
+| Accepted offer | Save reviewed source privately, connect the same project, verify default-branch automation and preserved data, return all four links, then finish. No feature, PR, or preview exercise. |
+| Declined or save-only | Decline ends the offer; save-only does not connect or add automation and checks whether an existing workflow would deploy the push. |
+| Already saved/configured | Adapt the offer truthfully; reuse the existing repository/connection/workflow and matching successful-run evidence without duplicate setup. |
+
+These reviews evaluate instruction consistency, not automatic enforcement or a new
+user study. The database helper, connection investigations/regression suite, and
+branch-development skill remain deferred. This revision makes no claim to resolve
+Daylist/Handoff Check's reported connection behavior.
+
+### Directly executed acceptance (macOS)
+
+A new disposable `prisma-main-handoff-check` Todo was built with the pinned
+Composer/cloud `0.21.0`, ORM peer `8.0.0-rc.11`, CLI `8.0.0-rc.17`, and `pg@8.22.0`.
+This is a test fixture in a separate private repository, not a bundled starter,
+connection helper, or new compatibility recommendation.
+
+- Clean installation, typecheck, and build passed under Node `24.16.0`/npm
+  `11.13.0`. Composer's local emulator used the available Bun `1.1.18` service
+  runtime. Local API create/list/complete/delete and Chrome interactions passed.
+- Local restart persistence passed: changing built output triggered a service
+  restart (listener PID changed from `35588` to `35717`); the original row ID,
+  title, and completed state survived and were visible after browser reload.
+  The database was not reset. This is separate from cloud redeploy persistence.
+- Unified CLI deployment without `--stage` succeeded. Workspace
+  `vt3bpj2c1qjx4sw2ne1vq17n` (**ChatGPT Plugin Review**), project
+  `proj_lww025chx98c15r44b9jk5o3`, Frankfurt (`eu-central-1`), had only branch
+  `br_b0r9ceemrp4pp09a5ujd5q7q`: `main`, role `production`.
+- Service `cps_v9e3dxrgjx4rxt11eiqvm2d5` and database
+  `db_fd3lta4os5rgmkw8o94xuazw` were verified on that branch. The initial live
+  version was `cpv_ianorjp1114zlhsajv3bflvr`. Live API CRUD passed; Studio on that
+  exact database independently displayed the retained synthetic row
+  `3afa26e0-810a-4565-8698-9a6135550492`, title and completed state. Browser creation
+  and deletion were reflected in Studio. This verifies database persistence, not
+  browser-storage survival.
+- Both handoff destinations were opened and verified in Chrome:
+  [Open your app](https://v9e3dxrgjx4rxt11eiqvm2d5.fra.prisma.build) and
+  [Manage your Prisma project](https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/lww025chx98c15r44b9jk5o3)
+  (branch `main`). Console initially lacked deployment history because the first
+  CLI deploy had no Git commit; this did not prevent the app serving successfully.
+- The accepted combined setup was exercised under Luan's explicit test approval.
+  Private repository [luanvdw/prisma-main-handoff-check](https://github.com/luanvdw/prisma-main-handoff-check),
+  ID `1397548718`, uses default branch `main`. The existing authorized personal
+  GitHub installation was reused; connection `srcrepo_wmyktgk2gr3ewdjeknl7331s`
+  points to the original project. CLI output and Console independently confirmed
+  the mapping. There was no existing workflow or generated workflow PR to duplicate.
+
+- The unchanged app was deployed by [GitHub run 36699611475](https://github.com/luanvdw/prisma-main-handoff-check/actions/runs/36699611475)
+  for workflow commit `5222d558b00fb97d1ac8b83cb522d848dbb49a0a`. Its log explicitly
+  selected `production (default branch, no --stage)` and reported `succeeded`.
+  OIDC, Node `24.16.0`/npm `11.13.0`, and Bun `1.4.2` worked without copied secrets.
+  The new live version `cpv_o4hv47cl5jiymmruo7zxecb8` retained the same service,
+  database, production branch, and URL. The original synthetic Todo's ID, title,
+  and completed state survived, confirmed by API and Chrome. Console showed
+  `main · 5222d55`, matching the run. This verifies redeployment of unchanged
+  application behavior, not an invented feature or an idle-recovery fix.
+- GitHub and Prisma each still had only `main`; GitHub had no PRs. The only
+  follow-up commit added the workflow and adjusted its README description.
+  No demonstration feature, preview branch, merge, or cleanup exercise occurred.
+
+The fixture contains only synthetic shared Todos. No original app was modified.
+The checks do not qualify idle/suspension recovery or the deferred database
+connection work. The offer's wording/routing was scenario-reviewed; this executed
+acceptance was not a fresh uncoached novice conversation.
+
+### Package and review checks
+
+- All three skills passed the existing validator. Packaging regression, integrity,
+  authored relative-link checks, and whitespace checks passed. Parsed YAML checks
+  covered production/main with no stage override and the preserved named
+  `demo`/GitHub `trunk` mapping, OIDC, serialization, and the unsuccessful-outcome
+  guard. These scenario checks do not claim another live `demo` redeployment.
+- The nine-file preview ZIP matches the generated bundle byte-for-byte. SHA-256:
+  `31ab00fac7e1a5e68cf0287c32898aa040f0e6d09fc617833fd65fa10c3bb817`.
+  The installed, enabled `prisma-preview` at `0.4.1-dev.4` matches all nine files,
+  including three skills and both authored references.
+- Imported Composer `0.21.0` retains SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+  Only the portable manifest version changed; branding, prompts, pins, MCP and
+  data restrictions remain. The submitted source/history and OpenAI submission
+  were not changed; no submitted archive was rebuilt or uploaded.
+- Local review found and resolved one ambiguity: default-branch verification
+  now checks the service and any required database, so static apps do not gain
+  an unnecessary database. Database reliability work remains separately scoped.
+
+Earlier sections below are historical results for their named versions.
+
+## Focused GitHub handoff `0.4.1-dev.3` (2026-09-29)
+
+This instruction revision ends at **build → deploy → save to GitHub → verify
+automatic updates → finish**. New automation targets only the actual default
+branch and the existing live stage. Existing working workflows, including
+previews, remain intact. Save-only requests do not connect or deploy; already
+configured apps reuse matching successful-run evidence. No feature, demonstration
+PR, additional preview push, merge, or cleanup is required to finish setup.
+
+The shared reference now covers runtime selection before work in each execution
+context, network/credential-store errors, 30-second HTTP timeouts, response checks,
+and explicit writable test-artifact paths outside Git. Recovery uses state, logs,
+and database-backed behavior; it does not prescribe routine live stop/start or
+unproven database workarounds. Claims distinguish immediate recovery from a
+retested idle condition, redeployment from restart, and resource reuse from new
+application code becoming live.
+
+### Evidence basis and investigation follow-ups
+
+The Daylist execution report and conversation supplied by Luan describe a
+successful GitHub connection/deployment followed by an unnecessary preview
+demonstration, runtime drift, an authentication false negative in a restricted
+context, and verification-script failures. These are **agent-reported evidence**,
+not actions reproduced during this revision. The reported versions were CLI
+`8.0.0-rc.17`, Composer/cloud `0.21.0`, and Postgres.js `3.4.9`.
+
+Two separate investigations remain deferred:
+
+- **Idle database behavior:** DB-backed requests reportedly hung while `/health`
+  returned 200. A connection-strategy change and immediate retry succeeded, but
+  the relevant idle condition was not repeated. Establish a reproduction before
+  selecting an application or upstream fix; this preview adds no connection recipe.
+- **Live stop/start routing:** the report records a running version with
+  `live: null`, a missing live URL, and a public 404 after stop/start. Redeployment
+  restored routing. Verify the supported lifecycle semantics and reproduce with
+  recorded versions before calling this a general platform bug.
+
+The completed pilot below remains the directly executed deployment baseline.
+This revision creates no cloud deployment, test PR, or Todo application change.
+No upstream code, dependency pins, packaging behavior, or submission changes are
+included. These instructions guide agents; they are not enforcement tests or a
+guarantee against failures.
+
+### Scenario reviews (not executed agent journeys)
+
+| Scenario | Expected behavior under the revised guidance |
+| --- | --- |
+| Ordinary build/deploy or declined offer | Build/deploy retains its existing sequence; GitHub setup starts only after acceptance or a direct request. |
+| Accepted offer or direct combined setup | Save reviewed source, connect the existing project, verify the workflow-configuration commit and app, return repository/run/live links, and finish. No invented feature or PR. |
+| Explicit save-only, including an undeployed app | No Prisma login, provisioning, connection, or new automation is required. If an existing workflow would deploy the push, clarify a non-deploying destination before pushing. |
+| Already configured repository, including previews | Reuse the matching connection/workflow and successful-run evidence; verify current app state without replacing the workflow or forcing a push. |
+| Interrupted setup, denied access, or build failure | Inspect completed steps and resume the same target; report partial progress without duplicate repositories/projects or destructive recovery. |
+| Successful no-op or skipped credentials | No-op convergence may pass with matching run/commit/app evidence; `skipped-no-credential` remains incomplete even if GitHub is green. No artificial version change. |
+| Runtime drift after context switch | Resolve and verify Node, package-manager, and relevant Bun executables in the new context before install/build/deploy. Preserve app pins. |
+| GitHub authentication error in a restricted context | Establish supported network and credential-store access and retry the read before claiming credentials are invalid or asking for login. |
+| Timeout, non-JSON response, or test-script exception | Use a finite request timeout, 30 seconds by default; inspect status/format before JSON parsing and separate request failure from harness failure. |
+| Lost artifact path or cookie identity | Establish explicit writable absolute paths outside Git; retain session identity and created record IDs as operations succeed for diagnosis and targeted cleanup. |
+| Database failure with a healthy `/health` | Check DB-backed behavior, deployment state, routing, and logs; do not infer health from the static endpoint or routinely stop/start the live version. |
+| Recovery uncertain or one retry succeeds after an idle failure | Preserve resources when safe recovery is unclear. After a supported fix, use the same deployment path and reverify; without repeating the idle condition, report only immediate recovery. |
+| Data survives a redeploy or resources remain unchanged | Describe precisely those observations; do not claim an actual restart or activation of changed application code without corresponding evidence. |
+
+### Maintainer-only preview exercise
+
+The full preview acceptance exercise remains available for separately authorized
+maintainer testing; it is not part of the installed setup journey or a new skill:
+
+1. Record live target identities and synthetic sample data; verify an unchanged-app
+   GitHub deployment preserves them.
+2. With explicit test scope, push a harmless feature branch and open a PR. Verify
+   an isolated preview service/database/URL and an unchanged live app/data.
+3. Push a second application change. Verify the same preview resources, updated
+   behavior, and retained preview data; a documentation-only no-op cannot prove
+   activation of changed application code.
+4. Only after approval, merge and verify the same live app updates with its data.
+   After approved branch deletion, verify platform preview cleanup and intact
+   live resources. Do not add an unsupported action destroy job or manually delete
+   resources to make the check pass.
+
+The `0.4.1-dev.2` pilot below completed this exercise. Its results remain historical
+evidence and were not repeated for this instruction revision.
+
+### Directly executed checks
+
+- All three skills passed the existing skill validator. The existing packaging
+  regression passed, including repeat builds, authored-file preservation, missing
+  inputs, tampering, and exactly three skills. Bundle integrity and whitespace
+  checks passed. No new test infrastructure was added.
+- The revised YAML example parsed successfully. Static checks covered `main`/`demo`
+  and a substituted `trunk`/`live` mapping: only the selected default branch has a
+  push trigger, the live stage is explicit, OIDC and Node/Bun setup remain, deploys
+  serialize, and outcomes other than `succeeded` fail the final step. This is not
+  a newly executed GitHub deployment. Authored relative links and anchors resolve.
+- The separate nine-file `prisma-0.4.1-dev.3-preview.zip` matches the rebuilt bundle
+  byte-for-byte. SHA-256:
+  `ffad7c8d6a3306cb078b58574e80a7698c3d0455d5c90570565c182f2f5f7ab7`.
+- The refreshed local `prisma-preview` is enabled at `0.4.1-dev.3`. All nine
+  installed files match, including all three skills and both authored references.
+  Manifest comparison confirmed that only its version changed; branding, prompts,
+  listing copy, and data-use restrictions were retained.
+- Composer `0.21.0` remains byte-for-byte unchanged at SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+  The saved submission archive retains SHA-256
+  `ad755a35a96fe9130251f3ca716fd122389556d6e81179cb2edba57fe765f225`.
+  Earlier archives remain intact; the OpenAI submission was not accessed or edited.
+
+## GitHub handoff retest `0.4.1-dev.2` (2026-09-29)
+
+After deployment of [the personal-installation connection fix](https://github.com/prisma/pdp-control-plane/pull/5488),
+the existing pilot resumed without a new repository, project, installation, or
+permission change. Luan completed **Connect your GitHub account** in the browser.
+The managed CLI returned an active repository connection; Console independently
+confirmed the private repository on the existing project. The skill reference now
+describes this choice separately from installing the App for a new account.
+
+Directly executed on macOS with the pilot's existing isolated Prisma session:
+
+- Repository `luanvdw/prisma-plugin-onboarding-todo` (GitHub ID `1392182365`)
+  connected to project `proj_ywzp2e8yo8edvlq8lqt0occ0` in workspace
+  `vt3bpj2c1qjx4sw2ne1vq17n`; connection ID
+  `srcrepo_db6ke4y5l4p222lcc68qk72q`.
+- [First GitHub deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36562607699)
+  succeeded for commit `3e38635415453f56822e110c52352c867572a92f` with unchanged
+  application code. Action `v1.7.0` obtained a short-lived credential through OIDC;
+  build `bld_g0f1xpezs4z9hxvjwlkc4k3r` succeeded. The existing `demo` service,
+  database, and URL below were preserved; live version became
+  `cpv_q09unep5b20d5xjjqbur9n0y`. Both baseline Todos survived. Browser creation,
+  completion, and deletion of an additional disposable Todo passed.
+- [First feature-branch deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36562995539)
+  succeeded for commit `6a9e9e31defe8808aa638b3fbcbb6bed2fd6ac20`, build
+  `bld_sdi3xfbgdhtg5is7isjx9a1s`. It created preview branch
+  `br_kizx8kms9o2s31q4fc6hrhr7`, service `cps_ieml1cwn91pw3fjqk2a552t8`,
+  database `db_aeg2pfjfuf1nuog7jucxk3v5`, and version
+  `cpv_jjxt1sggmvxf4y787ecbpud1`, all in Frankfurt. The preview browser displayed
+  the changed subtitle and saved a synthetic Todo. The live browser retained its
+  original subtitle and baseline Todo. [Pilot PR #1](https://github.com/luanvdw/prisma-plugin-onboarding-todo/pull/1)
+  contained only the small copy change and deployment documentation.
+- [Second feature-branch deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36563517042)
+  succeeded for commit `02d76482aa1feaeeb557ec97457c384baa66016e`. The same preview
+  branch, service, database, and URL were retained; live version became
+  `cpv_pgxwuc6tanenzstzsvo7ex85`. The browser showed the second subtitle and its
+  saved Todo after reload. Resource lists contained exactly one preview service
+  and database. The live app's version, subtitle, and both baseline samples stayed
+  unchanged. One live API read returned the previously observed HTTP 503; a retry
+  succeeded with the original sample. This intermittent application behavior is
+  still an observed limitation, not evidence of data loss or a failed CI run.
+
+- Luan approved merging pilot PR #1 and deleting its feature branch. The
+  [merge-triggered live deployment](https://github.com/luanvdw/prisma-plugin-onboarding-todo/actions/runs/36563968462)
+  succeeded for commit `fc731bfa93507bb68c1d573d807a0ae61f6ef53d`, build
+  `bld_ap8k11qew2vbwlez3o8yqpji`. The original live service, database, and URL
+  remained, with running version `cpv_yncuuvho8c01f0bsrv1wp2ey`. The browser showed
+  the merged subtitle and original Todo together; the API baseline also matched.
+- After the approved branch deletion, platform cleanup removed the preview branch.
+  The project-wide database list contained only the original live database, and
+  the preview URL returned HTTP 404. The live service/version and API sample
+  remained intact. No action destroy job or manual cloud-resource deletion was
+  used. All four deployment runs completed successfully.
+
+This completes the pilot's GitHub connection, OIDC deployment, repeat-preview,
+merge-to-live, and branch-cleanup acceptance. It does not prove every framework,
+package manager, operating system, or real-user authorization path. The existing
+intermittent data-read behavior remains recorded above.
+
+Packaging regression, all three skill validations, bundle integrity, and whitespace
+checks passed. The nine-file ZIP and refreshed `prisma-preview` installation match
+the bundle byte-for-byte at `0.4.1-dev.2`. Preview ZIP SHA-256:
+`5b490d8d96fd12ec1a459f7b582e51feb174d9652c015182a4109c8be08a6d92`.
+Composer's unchanged hash and the submitted `0.4.0` archive hash were verified
+against the values recorded below. The dedicated reviewer Todo, personal login,
+submission, and dependency pins are unchanged. Routing and recovery cases below
+remain scenario reviews, not executed agent or security-enforcement tests.
+
+## GitHub deployment preview `0.4.1-dev.2` (2026-09-28)
+
+Historical initial preparation and blocked attempt; the dated retest above records
+subsequent results without rewriting the evidence captured here.
+
+This preview adds the authored `prisma-github-deploy` skill and one supporting
+reference. Build-and-deploy offers a handoff only after a verified deployment.
+Packaging now preserves both authored skills and imports the unchanged Composer
+`0.21.0` reference, for exactly three skills. The older root `prisma-compute`
+skill was inspected for overlap; its older CLI/configuration path is not reused
+or included in this bundle. No root skill, upstream system, or submission changed.
+
+The GitHub path pins `prisma/cloud-deploy-action@v1.7.0`, with OIDC, explicit live
+stage mapping, separate branch previews, per-target serialization, and a guard
+against green `skipped-no-credential` outcomes. The reference excludes the action's
+unsupported destroy workflow. Runtime/dependency pins are preserved per app;
+GitHub Actions execution does not enable browser/cloud agent execution.
+
+### Directly executed checks
+
+- Existing packaging regression passed: two authored skills and references survive
+  repeat builds, missing inputs fail before replacement, tampering fails integrity,
+  and the bundle contains exactly the three expected skills.
+- All three skills passed the existing skill validator. Bundle integrity and
+  whitespace checks passed. Composer SHA-256 remains
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- The example workflow parsed as YAML with push-only triggering, read-content/OIDC
+  permissions, serialized deployment, and an explicit unsuccessful-outcome guard.
+  Parsing is not evidence of a successful GitHub deployment.
+- The pilot app's typecheck/build passed with its unchanged package pins:
+  CLI `8.0.0-rc.15`, Composer/cloud `0.21.0`, ORM Postgres `8.0.0-rc.11`,
+  Bun `1.4.2`, Node `24.16.0`, and npm `11.13.0`.
+
+- The separate nine-file preview ZIP matches the bundle and the refreshed local
+  `prisma-preview` installation byte-for-byte, including all three skills and both
+  authored references. Installed version is `0.4.1-dev.2`. ZIP SHA-256:
+  `5a7d0fe725cbbe6924af06a1c353a1a2f381bc49583e7693b3f7ce932d2f383f`.
+- The submitted `prisma-0.4.0-mcp-draft.zip` retains SHA-256
+  `ad755a35a96fe9130251f3ca716fd122389556d6e81179cb2edba57fe765f225`.
+  No portal interaction, release, or submission replacement was performed.
+
+### Pilot acceptance in progress
+
+The approved app is **onboarding-todo** in **ChatGPT Plugin Review**, Frankfurt
+(`eu-central-1`), live stage `demo`. The dedicated reviewer Todo is untouched.
+Baseline inspection confirmed the existing project, service, database, and live
+version. Source and the lockfile were reviewed and saved privately in
+[luanvdw/prisma-plugin-onboarding-todo](https://github.com/luanvdw/prisma-plugin-onboarding-todo).
+Local credentials, deploy reports/state, logs, and private test instructions are
+excluded. The original isolated CLI credential environment is retained.
+
+| Identity | Baseline |
+| --- | --- |
+| Workspace | `vt3bpj2c1qjx4sw2ne1vq17n` |
+| Project | `proj_ywzp2e8yo8edvlq8lqt0occ0` |
+| Live stage | `demo` |
+| Service | `cps_u2dqk2l7etg77rc9bi3i55st` |
+| Database | `db_szqv1hbn0sn85n6a4k9yw1k3` |
+| Service version | `cpv_iqa86kwn1vyqi4u8ek7aen39` |
+
+Live URL: <https://u2dqk2l7etg77rc9bi3i55st.fra.prisma.build>.
+A synthetic Todo was created in Chrome; an independent API sample with ID
+`9e97488a-64de-4707-9c3f-e10a7717ed0f` was recorded for comparison. Test cookies
+remain outside Git. Before any deployment changes, occasional browser loading
+failures and an API HTTP 503 occurred; subsequent health/list/create reads worked.
+This pre-existing intermittent behavior is not attributed to GitHub automation.
+
+The first managed `git connect` attempt timed out with
+`GIT.REPO_INSTALLATION_REQUIRED` while GitHub awaited identity confirmation.
+Luan subsequently completed that confirmation. GitHub then showed the existing
+`luanvdw` installation (ID `29254405`, installed in 2022) covering all repositories;
+its permission-review page reported that the App was already up to date.
+
+On resuming, Prisma Console still showed no installation connected to **ChatGPT
+Plugin Review**. Its supported existing-installation selector offered `prisma`,
+not `luanvdw`. Both the CLI installation flow and Console's Add installation flow
+led to GitHub's existing-installation configuration instead of completing the
+workspace association. No permissions were changed and no other installation was
+connected. This is a workspace-association blocker, not an outstanding request for
+Luan to repeat identity confirmation. Its root cause is not yet established.
+
+No repository connection or workflow deployment was created. The first unchanged-
+code deployment, two preview pushes, approved merge, and approved branch-deletion
+cleanup remain pending resolution of that association. CodeQL checks on draft
+PR #9 passed. The original live resources, synthetic Todo samples, and dedicated
+reviewer app remain unchanged. Do not read the
+historical local/live deployment results below as proof of this new CI path.
+
+### Scenario review (not executed agent or security-enforcement tests)
+
+| Scenario | Expected behavior confirmed in the instructions |
+| --- | --- |
+| Cancel GitHub authorization | Keep app/repository progress; stop the old attempt, resume the same mapping when authorized. |
+| Denied repository access | Explain the missing access; no public-repo, credential-copying, or replacement-project workaround. |
+| Already connected correctly | Reuse connection/workflow; do not create duplicate automation. |
+| Different repository/project or live-stage collision | Clarify before changes; never disconnect, rename resources, or overwrite live data to make setup pass. |
+| Missing OIDC credentials | Treat `skipped-no-credential` as incomplete; inspect connection and permissions. |
+| Build/startup/quota failure | Report failed phase and actual live/partial state; retain identifiers and prior live app. |
+| PHI/PCI may be present | Stop affected access; synthetic environment only, with no MCP-to-CLI bypass. |
+
+Routing review used five should-fire cases: accepted post-deploy offer; direct
+“save this deployed Composer app to GitHub”; direct “enable automatic updates for
+this Prisma app”; “resume the GitHub connection”; and “diagnose this Prisma branch
+preview.” Each selects the new skill and retains the existing target.
+
+Five should-not-fire cases: ordinary “build a Todo app and deploy it”; local-only
+app work; unrelated Git refactoring; an ORM query question; and an explicit decline
+of GitHub setup. These do not start repository setup. A direct GitHub request for
+an undeployed app establishes the live target through the build workflow first.
+No new automated scenario framework was added.
+
 ## Onboarding preview `0.4.1-dev.1` (2026-09-25)
 
 This development preview selects released CLI `8.0.0-rc.17` for new apps and
