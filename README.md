@@ -1,8 +1,8 @@
 # Prisma Plugin
 
-## Composer plugin: desktop-local preview
+## Composer plugin: desktop-local release
 
-The first focused preview builds apps with **Prisma Composer** and deploys them to
+The focused plugin builds apps with **Prisma Composer** and deploys them to
 **Prisma Compute**. Its portable [Agent Plugins 1.0.0](https://agent-plugins.org/)
 manifest lives in `plugins/prisma/plugin.json`. It includes three skills:
 
@@ -16,16 +16,17 @@ manifest lives in `plugins/prisma/plugin.json`. It includes three skills:
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The local development preview is **`0.4.1-dev.4`**. New projects use
+The release candidate is **`0.4.1`**. New projects use
 `prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
 back to ChatGPT. The agent handles commands and connection verification; existing
 apps keep their toolchains and use standard sign-in if their CLI lacks the option.
 
-The submitted **`0.4.0`** package remains separate and unchanged, using
-`prisma@8.0.0-rc.15`. Its OpenAI submission was observed in **Review** on
-2026-09-25. That submission connects Prisma's existing MCP server for optional
-diagnostics. Composer and the CLI remain responsible for the build/deploy journey.
-See [validation](docs/validation.md) for completed checks and remaining acceptance.
+The published **`0.4.0`** remains live until its replacement is approved and
+published. Local builds, Git commits, and merges do not update the marketplace.
+Prisma's existing MCP server supplies optional diagnostics; Composer and the CLI
+remain responsible for the build/deploy journey. See [release notes](docs/releases/0.4.1.md)
+and [validation](docs/validation.md). The September 30 deployment acceptance is
+reused for this packaging release; no database connection fix is claimed.
 
 ### Package and install
 
@@ -52,7 +53,7 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Confirm the installed version is `0.4.1-dev.4`. In the ChatGPT
+Codex's cache. Confirm the installed version is `0.4.1`. In the ChatGPT
 desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
 with the updated skills. Confirm that
 `prisma:prisma-build-and-deploy`, `prisma:prisma-github-deploy`, and
@@ -186,23 +187,35 @@ Run `node --test scripts/package-plugin.test.mjs` for packaging regression tests
 (requires access to the npm registry). These build an isolated temporary copy and
 verify repeatability, preservation of authored content, and integrity failures.
 
-The local marketplace is separate from public directory publication. Rebuilding
-or reinstalling this preview does not replace the skills uploaded for `0.4.0`.
-Do not overwrite the saved submission archives or upload development previews to
-the existing submission. A fresh clone
-must run the packager before installing. Preserve a complete release ZIP of the
-generated `plugins/prisma/` tree, with `plugin.json` at its root; do not include
-the older root plugin. In the current With MCP form, upload each skill as its own
-ZIP with `SKILL.md` at the root and its reference paths intact. Export those ZIPs
-from the same verified bundle without changing their contents. The submitted
-**With MCP** version in the [OpenAI plugin submission](https://platform.openai.com/plugins)
-portal combines its separately registered server with the two uploaded skills.
-Leave that submission untouched while iterating locally. Updating a submission
-or publishing requires a separate instruction from the publisher.
-The generated `upstream.json` records exactly which release and files were packaged.
-See [submission materials](docs/submission.md) for review cases, recording guidance,
-and its recorded preparation history. Submission does not mean OpenAI has approved
-or published the plugin.
+### Export and update the marketplace
+
+OpenAI now accepts one complete ZIP for both new plugins and updates. After
+building the focused bundle, export and check it (Python 3 is also required):
+
+```bash
+python3 scripts/export-marketplace.py /tmp/prisma-plugin-release
+python3 scripts/export-marketplace.py /tmp/prisma-plugin-release --check
+```
+
+The export produces `prisma-0.4.1.zip` and `prisma-0.4.1.zip.sha256` from the same
+three skill sources. It retains the published package name
+`app-6ab4ed5292d48191bc192893c8c83045`, approved listing fields and icon, and declares
+`https://mcp.prisma.io/mcp` in `mcp.json`. The local preview keeps its separate
+`prisma` identity. `marketplace/` contains only listing overrides, the approved
+image, review cases, and MCP configuration; it does not duplicate skills.
+
+Upload the complete archive through **Upload plugin to make changes** on the
+[existing Prisma listing](https://platform.openai.com/plugins/manage/plugin_asdk_app_6ab4ed5292d48191bc192893c8c83045).
+Do not upload individual skills or create another listing. Correct metadata and
+skills in source, rebuild, and reupload. Availability, demo materials and private
+reviewer access stay in the portal; do not include credentials or private
+instructions in the ZIP. Preserve the old release archive.
+
+Run the required scans and inspect the saved draft before submission. The current
+release task stops there for publisher review. Submission and publication are
+separate steps; keep the approved ZIP unchanged during review. After publication,
+record the exact source commit, ZIP and checksum in the GitHub release. See
+[submission materials](docs/submission.md) for the checklist and historical record.
 
 ## Existing broad plugin
 

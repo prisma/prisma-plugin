@@ -1,5 +1,50 @@
 # Plugin validation
 
+## Release candidate `0.4.1` (2026-10-06)
+
+This release packages the already merged `0.4.1-dev.4` skills without changing
+their instructions or dependencies. The September 30 macOS deployment acceptance
+below remains the end-to-end baseline. No new cloud deployment, sign-in, idle
+recovery experiment or recording was performed for release packaging.
+
+### Fresh local checks
+
+- All three skills passed the existing skill validator. The focused build and
+  offline package-integrity check passed.
+- The packaging regression passed, including repeat builds, byte-identical
+  marketplace ZIPs, preserved authored references, rejected tampering/stale
+  content, checksum mismatches, and exclusion of an untracked root `.env` fixture.
+- The complete ZIP contains exactly three skills and their two references,
+  `plugin.json`, `mcp.json`, the approved PNG, and upstream license. Its identity
+  and every listing field exported in the published `0.4.0` manifest match the
+  baseline. MCP uses the existing URL, with no credentials or app-reference file.
+- Composer `0.21.0` is byte-identical to both the published archive and pinned
+  package: SHA-256 `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- The existing `prisma-preview` installation was refreshed to `0.4.1`; installed
+  files match the focused bundle, including all three discoverable skill headers
+  and references. This is local installation verification, not marketplace
+  installation or a new autonomous user journey.
+- Local diff review and whitespace checks cover the export, metadata, tests and
+  documentation. The older root plugin and all skill source files are unchanged.
+
+### Routing scenario review
+
+The unchanged build skill handles an ordinary selected-plugin app request and
+offers GitHub only after deployment. Acceptance or a direct setup request selects
+the GitHub skill; declined/save-only/already-configured cases retain their scoped
+behavior. References resolve between the three installed skills. These are
+instruction/route reviews, not executed agent conversations.
+
+### Portal baseline (before upload)
+
+Published `0.4.0` and its passed metadata/skill checks were observed October 6.
+The existing MCP URL is authorized and domain-verified. The portal lists newer
+tool definitions, with held updates for promotion and rollback annotation
+findings; earlier approved versions remain live. This is separate from the skills
+release, not evidence of a broken authentication connection. Recheck required
+draft validations after upload and record the saved draft outcome in the release
+handoff. No upstream changes are included.
+
 ## Persistence and default-target handoff `0.4.1-dev.4` (2026-09-30)
 
 This revision changes four defaults: new persistent Composer apps use Prisma

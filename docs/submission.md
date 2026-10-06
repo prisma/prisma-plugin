@@ -1,4 +1,79 @@
-# Prisma 0.4.0 submission record
+# Prisma marketplace releases
+
+## 0.4.1: complete-ZIP update (2026-10-06)
+
+Published `0.4.0` was verified in the portal on October 6. Prepare `0.4.1` on the
+same listing, then stop at an editable draft for Luan. Do not submit, accept
+publisher declarations, publish, or tag a release until separately authorized.
+The historical preparation notes below describe the old per-skill upload process,
+not the current publishing procedure.
+
+### Release contents and source
+
+This release packages the three skills already merged in PR #9: clearer browser
+sign-in, Prisma Postgres persistence, default `main` targeting, app/project links,
+and GitHub saving with verified automatic updates. Pins, data restrictions and
+optional diagnostics remain unchanged. Composer `0.21.0` is copied byte-for-byte.
+No new deployment, driver/helper changes, or idle-recovery claim belongs here.
+
+Run the existing packager and validator, then
+`python3 scripts/export-marketplace.py <output-directory>` and its `--check` mode.
+The output ZIP contains root `plugin.json`, `mcp.json`, the three skills and their
+references, approved artwork, and the upstream license. It excludes the older
+root plugin, app-reference files, hooks, credentials, and private review material.
+The exporter uses deterministic ZIP entries and emits a SHA-256 file. Build the
+final archive from the merged release commit and record that commit separately
+alongside the ZIP and checksum.
+
+`marketplace/metadata.json` retains the published identity, category, capabilities
+and icon paths; other listing fields come from the maintained focused manifest.
+The approved 256px PNG was retrieved unchanged from the published listing.
+OpenAI's downloaded `0.4.0` archive omitted assets and MCP configuration, so these
+are explicitly included in the complete export. The downloaded baseline ZIP has
+SHA-256 `5f34f6e7f319218846d235a447aca2a4abf988159ddece387bdd8f45eb2faede`.
+Keep that archive separately; it differs from the original submission export below.
+
+### Draft preparation and review
+
+1. On the existing Prisma listing in the verified organization's **Prisma Plugin**
+   project, use **Upload plugin to make changes** with the complete ZIP.
+2. Confirm identity, version `0.4.1`, all three skills/references, approved copy and
+   icon, and the existing MCP endpoint/authorization/domain verification. Fix
+   required setup or scan errors. Advisory findings may accompany review; they
+   are not automatically instructions to change the upstream server.
+3. Preserve availability, reviewer access and demo recording. The package omits
+   those fields so saved portal values remain. Review cases in
+   `marketplace/review-cases.json` retain five diagnostic reads and three negative
+   prompts, with updated expectations for scope and truthful verification.
+4. Add the GitHub setup review scenario and September 30 acceptance evidence to
+   the private reviewer instructions. Keep access details in the portal only.
+5. Share the saved draft, release notes, exact archive/checksum, source commit and
+   remaining issues with Luan. **Stop before Submit for Review.**
+
+GitHub setup scenario for the reviewer-instructions field: with an already deployed
+Composer app available locally, ask “Save my app to GitHub and enable automatic
+updates.” Expect owner/destination confirmation where unresolved, private saving,
+a connection to the same Prisma project, default-branch automation, preserved
+app/database/data and repository, workflow, app and project links. End after setup;
+no demonstration feature, preview branch or PR. Save-only or declined setup must
+not enable deployment. This requires authorized GitHub access and may run a
+workflow deployment; it is separate from read-only MCP diagnostics.
+
+The directly executed macOS evidence is in [validation](validation.md), September
+30. New release checks are packaging/discovery checks and scenario reviews, not a
+repeat end-to-end deployment or proof that deferred database issues are resolved.
+
+After draft approval, obtain the required publisher attestations with Luan,
+submit, and verify review status. Keep `0.4.0` published until OpenAI approval and
+Luan's instruction to publish. Then verify marketplace installation without the
+local preview, create `v0.4.1` at the recorded source commit and attach the exact
+submitted ZIP, checksum and [release notes](releases/0.4.1.md) to the GitHub release.
+
+Source: [OpenAI submission guide](https://developers.openai.com/plugins/deploy/submission),
+checked 2026-10-06. Metadata/skills changes use a complete ZIP; eligible hosted MCP
+updates are scanned separately. Do not change the endpoint as part of this release.
+
+## Historical 0.4.0 submission record
 
 Luan submitted `0.4.0`; the portal status was observed as **Review** on
 2026-09-25. The preparation notes below describe the earlier saved draft and

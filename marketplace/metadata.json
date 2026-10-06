@@ -1,0 +1,9 @@
+{
+  "name": "app-6ab4ed5292d48191bc192893c8c83045",
+  "interface": {
+    "category": "Developer Tools",
+    "capabilities": [],
+    "composerIcon": "./assets/prisma-icon.png",
+    "logo": "./assets/prisma-icon.png"
+  }
+}
