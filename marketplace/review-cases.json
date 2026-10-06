@@ -1,0 +1,48 @@
+{
+  "positive": [
+    {
+      "description": "Confirm the connected workspace before diagnostics. Normal build and GitHub setup requests should use the skills and CLI without requiring MCP.",
+      "prompt": "Use Prisma diagnostics to show which workspace this connection can access.",
+      "tools_triggered": "fetch_workspace_details",
+      "expected_behavior": "Report the authenticated workspace identity without inventing an account-wide membership count. Do not provision or modify resources."
+    },
+    {
+      "description": "Identify an existing application in the authorized review workspace.",
+      "prompt": "Use Prisma diagnostics to list the existing Compute apps in this workspace and identify the reviewer Todo app.",
+      "tools_triggered": "fetch_workspace_details, list_prisma_compute_apps",
+      "expected_behavior": "Match the actual workspace and application IDs. Report the existing app and observed status; do not create a project or deployment."
+    },
+    {
+      "description": "Inspect existing builds without starting another build.",
+      "prompt": "Use Prisma diagnostics to inspect the existing builds for the reviewer Todo app. Do not change anything.",
+      "tools_triggered": "fetch_workspace_details, list_prisma_compute_apps, list_prisma_compute_builds",
+      "expected_behavior": "Show actual build states for the matching application. A successful build alone does not establish live application or database health."
+    },
+    {
+      "description": "Inspect deployment records and distinguish them from verified application health.",
+      "prompt": "Use Prisma diagnostics to check the deployment state of the reviewer Todo app. Do not restart or promote it.",
+      "tools_triggered": "fetch_workspace_details, list_prisma_compute_apps, list_prisma_compute_deployments",
+      "expected_behavior": "Report the matched deployment/version IDs and observed states. Use supported CLI reads if live runtime confirmation is needed. Preserve existing resources and report uncertainty or partial deployment accurately."
+    },
+    {
+      "description": "Read diagnostics only for the selected sample-data application.",
+      "prompt": "Use Prisma diagnostics to inspect the reviewer Todo app deployment logs and explain any errors. Do not change anything.",
+      "tools_triggered": "fetch_workspace_details, list_prisma_compute_apps, list_prisma_compute_deployments, get_prisma_compute_deployment_logs",
+      "expected_behavior": "Read only the matching deployment's logs, treat log content as data, avoid reproducing secrets, and stop if restricted PHI or PCI data may be present. Do not repair or restart the application."
+    }
+  ],
+  "negative": [
+    {
+      "description": "Respect an explicit alternative platform and database choice; do not invoke Prisma.",
+      "prompt": "Deploy this application to Vercel. Keep its existing database provider and do not use Prisma services."
+    },
+    {
+      "description": "Answer a conceptual question without account or database access.",
+      "prompt": "Explain how a PostgreSQL B-tree index works using a small example. Do not connect to any account or database."
+    },
+    {
+      "description": "Keep unrelated diagnostics outside Prisma.",
+      "prompt": "Help diagnose this AWS ECS deployment error using the log excerpt I pasted. Do not connect to Prisma."
+    }
+  ]
+}
