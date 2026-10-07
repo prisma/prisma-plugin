@@ -9,13 +9,14 @@ import { fileURLToPath } from 'node:url';
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const workflow = 'plugins/prisma/skills/prisma-build-and-deploy';
 const github = 'plugins/prisma/skills/prisma-github-deploy';
+const diagnostics = 'plugins/prisma/skills/prisma-diagnose';
 
 test('packaging preserves authored files and verifies the complete bundle', async () => {
   const temporary = await mkdtemp(join(tmpdir(), 'prisma-plugin-test-'));
   try {
     for (const relative of [
       'scripts/package-plugin.mjs', 'scripts/export-marketplace.py', 'plugins/prisma/plugin.json',
-      'assets/prisma-icon.svg', 'marketplace', 'docs/releases', workflow, github,
+      'assets/prisma-icon.svg', 'marketplace', 'docs/releases', workflow, github, diagnostics,
     ]) {
       await mkdir(dirname(join(temporary, relative)), { recursive: true });
       await cp(join(root, relative), join(temporary, relative), { recursive: true });
@@ -28,8 +29,11 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
     const referencePath = join(temporary, workflow, 'references/toolchain.md');
     const authored = await readFile(skillPath);
     const reference = await readFile(referencePath);
-    const githubFiles = [join(temporary, github, 'SKILL.md'), join(temporary, github, 'references/github-deploy.md')];
-    const githubContent = await Promise.all(githubFiles.map((path) => readFile(path)));
+    const additionalFiles = [
+      join(temporary, github, 'SKILL.md'), join(temporary, github, 'references/github-deploy.md'),
+      join(temporary, diagnostics, 'SKILL.md'), join(temporary, diagnostics, 'references/diagnostics.md'),
+    ];
+    const additionalContent = await Promise.all(additionalFiles.map((path) => readFile(path)));
     // A maintainer's additional supporting file must survive too.
     const extraReference = join(temporary, workflow, 'references/local-note.md');
     await writeFile(extraReference, 'Authored content must survive packaging.\n');
@@ -37,7 +41,7 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
     pass(run());
     pass(run('--check'));
     assert.deepEqual((await readdir(join(temporary, 'plugins/prisma/skills'))).sort(), [
-      'prisma-build-and-deploy', 'prisma-composer-core-concepts', 'prisma-github-deploy',
+      'prisma-build-and-deploy', 'prisma-composer-core-concepts', 'prisma-diagnose', 'prisma-github-deploy',
     ]);
     const provenancePath = join(temporary, 'plugins/prisma/upstream.json');
     const provenance = await readFile(provenancePath);
@@ -45,13 +49,13 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
     assert.deepEqual(await readFile(provenancePath), provenance);
     assert.deepEqual(await readFile(skillPath), authored);
     assert.deepEqual(await readFile(referencePath), reference);
-    for (const [index, path] of githubFiles.entries()) {
-      assert.deepEqual(await readFile(path), githubContent[index]);
+    for (const [index, path] of additionalFiles.entries()) {
+      assert.deepEqual(await readFile(path), additionalContent[index]);
     }
     assert.equal(await readFile(extraReference, 'utf8'), 'Authored content must survive packaging.\n');
 
     const upstreamPath = join(temporary, 'plugins/prisma/skills/prisma-composer-core-concepts/SKILL.md');
-    for (const path of [skillPath, referencePath, ...githubFiles, upstreamPath]) {
+    for (const path of [skillPath, referencePath, ...additionalFiles, upstreamPath]) {
       const before = await readFile(path);
       await writeFile(path, Buffer.concat([before, Buffer.from('\nmodified\n')]));
       assert.notEqual(run('--check').status, 0);
@@ -62,7 +66,7 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
     assert.notEqual(run('--check').status, 0);
     await rm(unexpected, { recursive: true });
 
-    for (const path of [skillPath, referencePath, ...githubFiles]) {
+    for (const path of [skillPath, referencePath, ...additionalFiles]) {
       const before = await readFile(path);
       await rm(path);
       assert.notEqual(run('--check').status, 0);
@@ -101,7 +105,7 @@ with zipfile.ZipFile(archive_path) as archive:
     manifest = json.loads(archive.read('plugin.json'))
     assert manifest['name'] == 'app-6ab4ed5292d48191bc192893c8c83045'
     assert manifest['version'] == json.loads((root / 'plugins/prisma/plugin.json').read_text())['version']
-    assert sorted(n.split('/')[1] for n in names if n.endswith('/SKILL.md')) == ['prisma-build-and-deploy', 'prisma-composer-core-concepts', 'prisma-github-deploy']
+    assert sorted(n.split('/')[1] for n in names if n.endswith('/SKILL.md')) == ['prisma-build-and-deploy', 'prisma-composer-core-concepts', 'prisma-diagnose', 'prisma-github-deploy']
     for name in names:
         assert name in ['plugin.json', 'mcp.json', 'LICENSE', 'assets/prisma-icon.png'] or name.startswith('skills/')
         if name.startswith('skills/'):
@@ -129,8 +133,8 @@ with zipfile.ZipFile(archive_path) as archive:
     pass(run());
     assert.notEqual(exportRun().status, 0, 'Development previews must not be exported for publication.');
 
-    // Neither authored skill may be covered by a generated-content ignore.
-    for (const directory of [workflow, github]) {
+    // No authored skill may be covered by a generated-content ignore.
+    for (const directory of [workflow, github, diagnostics]) {
       const ignored = spawnSync('git', ['check-ignore', '--no-index', `${directory}/SKILL.md`], { cwd: root });
       assert.equal(ignored.status, 1);
     }

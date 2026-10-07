@@ -17,6 +17,7 @@ const skill = 'prisma-composer-core-concepts';
 const authoredSkills = {
   'prisma-build-and-deploy': 'references/toolchain.md',
   'prisma-github-deploy': 'references/github-deploy.md',
+  'prisma-diagnose': 'references/diagnostics.md',
 };
 const expectedSkills = [...Object.keys(authoredSkills), skill].sort();
 const root = dirname(dirname(fileURLToPath(import.meta.url)));

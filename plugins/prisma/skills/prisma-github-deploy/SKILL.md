@@ -2,12 +2,13 @@
 name: prisma-github-deploy
 description: >-
   Save a Prisma Composer app to GitHub, connect its existing Prisma project,
-  and enable or diagnose default-branch automatic deployments. Use when
+  and enable default-branch automatic deployments. Use when
   the user accepts the offer to save their code to GitHub and connect it to Prisma
   for automatic updates, accepts the shorter GitHub-saving offer, or
   directly requests this setup, including resuming an interrupted connection.
   Do not start GitHub setup for an ordinary build/deploy request, unrelated Git
   work, or a request to deploy an app before a live target has been established.
+  Standalone deployed-app checks and log investigations belong to prisma-diagnose.
 ---
 
 # Save to GitHub and enable automatic updates
@@ -57,9 +58,12 @@ need no extra questionnaire. Preserve secret redaction during diagnostics.
   files and diff first; exclude secrets, local auth, deployment state/reports, logs,
   and private test instructions. Do not commit an entire directory blindly.
   Record the repository and known workspace/project IDs, target kind and branch,
-  region, verified app/project links,
+  region, service/app and database identities, verified app/project links,
   and deployment behavior in existing app documentation, without credentials or
-  machine-specific paths. Keep dependency/runtime pins. For save-only requests,
+  machine-specific paths. This is the shared setup/diagnostic handoff; reuse it
+  rather than adding another state file. Resolve the current live deployment anew
+  during later checks instead of treating a recorded version as permanently live.
+  Keep dependency/runtime pins. For save-only requests,
   finish here without connecting, adding automation, or triggering a workflow;
   clarify before pushing if saving to that branch would itself deploy.
 
@@ -105,7 +109,11 @@ and the app's existing persistence checks. Report partial progress and a specifi
 failing step for denied access, missing OIDC credentials, quota, build, or startup
 failures. Preserve connections and state while fixing the cause; no automatic
 destructive recovery.
-Optional MCP diagnostics follow the existing workflow's identity and data-use rules.
+When a deployment failure needs investigation, hand off to
+[Prisma Diagnose](../prisma-diagnose/SKILL.md) with the established target, failed
+step/error, workflow-run/commit link and available build/deployment IDs. It returns
+findings and coverage gaps; this skill retains responsibility for any authorized
+setup recovery. A successful setup does not need an extra diagnostic pass.
 
 Finish with repository and successful workflow-run links, **Open your app**, and
 **Manage your Prisma project**, retaining the verified deployment links and branch.

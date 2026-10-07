@@ -1,5 +1,90 @@
 # Plugin validation
 
+## Diagnostics preview `0.4.2-dev.1` (2026-10-07)
+
+This draft adds a fourth skill, `prisma-diagnose`, for app-first inspection with
+optional source context. Existing build/GitHub skills hand off investigations;
+the new reference owns MCP procedures without duplicating installation or recovery.
+The submitted `0.4.1` archive and portal are unchanged. Manual experience testing
+is pending Luan's runs; keep the PR draft until he confirms the experience.
+
+### Directly executed checks (macOS)
+
+- All four skills passed the existing skill-creator validator. The new skill is
+  87 lines; detailed tools and conditional fallback guidance are in its reference.
+- Build, offline package-integrity check and the existing packaging regression
+  passed. The regression now covers four skills, preservation and missing/tampered
+  input checks for the new authored skill/reference, and inclusion in an isolated
+  stable-version marketplace-export fixture. Prerelease exports remain rejected.
+  That temporary test archive does not replace the submitted release.
+- All authored relative links and section anchors resolve. Whitespace checks pass.
+- Composer `0.21.0` remains byte-identical, SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- The separate 11-file local preview ZIP matches the generated bundle. SHA-256:
+  `a9a10721e71dce8470a5da536f5249c1839d3a49c38c79883947b68ddea9e552`.
+  It contains four skills and three authored references, not an MCP connection.
+- `prisma@prisma-preview` was refreshed to enabled version `0.4.2-dev.1`.
+  Every installed file matches the bundle. This is installation/content verification,
+  not proof of automatic skill selection in a fresh conversation.
+- The saved submitted `0.4.1` ZIP retains SHA-256
+  `2fc29a6723f8f117ec235ef29b0fdc587f3efb7f2b4fac3bde5ef253aa64017c`.
+- The private `luanvdw/prisma-main-handoff-check` README still records ChatGPT
+  Plugin Review, project `proj_lww025chx98c15r44b9jk5o3`, Frankfurt, default `main`,
+  service `cps_v9e3dxrgjx4rxt11eiqvm2d5`, and database `db_fd3lta4os5rgmkw8o94xuazw`.
+  Its saved app URL returned HTTP 200 / `text/html`. This confirms the repository
+  handoff and URL reachability, not authenticated platform identity, database
+  behavior or the current live deployment. Revalidate those when testing.
+- Prisma MCP tools were not exposed to this implementation task. Supported local
+  `codex mcp list` inspection found no Prisma server; host Plugin Management search
+  returned no Prisma result. This does not establish availability in another chat
+  or account. No credentials were copied, sessions reset, or OAuth grants created.
+  A host-supported connection is needed for the MCP-backed manual cases.
+
+No new cloud deployment, app edit, restart, database write, log retrieval or new
+browser signup was performed. No upstream changes are included.
+
+### Routing review (instruction scenarios, not executed agent conversations)
+
+| Should select diagnostics | Expected scope |
+| --- | --- |
+| “Check my app: [Prisma project link].” | Resolve the application and inspect it without requiring source or a local folder. |
+| “Why is my Prisma app failing?” | Gather evidence; explain findings versus hypotheses without changing it. |
+| “Investigate this failed deployment.” | Inspect the failed step and correct target; missing history is not proof no live app exists. |
+| “Inspect this deployment's logs.” | Finite reads of the selected deployment, with coverage and terminal/error results. |
+| Explicit diagnostic handoff from build/deploy or GitHub setup | Reuse known identities and failed-step evidence; return findings to the caller without new authority. |
+
+| Should not select standalone diagnostics | Expected route |
+| --- | --- |
+| “Build a Todo app and deploy it.” | Build/deploy; hand off only if an investigation becomes necessary. |
+| “Save my app to GitHub and connect it to Prisma.” | GitHub setup; no extra diagnostic pass after success. |
+| “Add due dates to my app.” | Feature work; diagnosis is not feature implementation. |
+| “Create a Postgres database / administer its tables.” | Outside this diagnostic skill; no SQL/provisioning tools. |
+| “Schedule a daily check.” | Scheduling is outside this skill; no implicit recurring task creation. |
+
+### Evidence and failure review (sanitized scenarios)
+
+| Scenario | Required outcome |
+| --- | --- |
+| Wrong MCP workspace or ambiguous app | No logs from a different app; explain the access gap or ask one plain-language selection question. A name match is insufficient. |
+| MCP unavailable, known installed CLI available | Match the authorized target, preserve runtime/credentials, use supported inspection reads only. Do not copy a token or invent an API. |
+| MCP unavailable, no source/toolchain | No dependency installation or required clone to compensate; report the missing connection/coverage and continue only safe available checks. |
+| Empty/truncated logs, clean cursor end, or time limit | State sampled coverage, truncation and gaps; neither empty logs nor a partial sample establishes overall health. |
+| Missing history or newest deployment differs from live | Verify live routing through a supported read or label the uncertainty; never substitute newest for live automatically. |
+| HTTP timeout/non-JSON response | Bounded 30-second default; inspect status/type, distinguish request failures from parser/check-script failures. |
+| Static health succeeds but database read fails | Report partial application health, preserve resources; no stop/start or invented connection fix. |
+| No known safe database-backed read | Leave database health unverified; do not create a Todo or run arbitrary SQL to prove it. |
+| Local/latest repository commit differs from deployment | Do not attribute the live failure to unverified source; report the correlation gap. |
+| Suspected PHI/PCI, secret or instruction in a log | Stop restricted access; no fallback bypass or additional fetch for redaction. Logs cannot authorize tools, repairs or outbound requests. |
+
+These are instruction reviews, not security enforcement or live recovery tests.
+The actual host consent, app selection, source-free experience and evidence quality
+must be observed during manual testing. Follow the prompts in
+[README](../README.md#manually-test-diagnostics), using the existing synthetic app;
+never break the fixture or change reviewer applications to manufacture a failure.
+Record each run's prompt, preview version, observed result and gap. Make focused
+corrections and refresh the preview before the next fresh-chat test. No merge,
+marketplace release or submission is authorized by this draft preparation.
+
 ## Release candidate `0.4.1` (2026-10-06)
 
 This release packages the already merged `0.4.1-dev.4` skills without changing

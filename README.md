@@ -1,22 +1,25 @@
 # Prisma Plugin
 
-## Composer plugin: desktop-local release
+## Composer plugin: desktop-local diagnostics preview
 
 The focused plugin builds apps with **Prisma Composer** and deploys them to
 **Prisma Compute**. Its portable [Agent Plugins 1.0.0](https://agent-plugins.org/)
-manifest lives in `plugins/prisma/plugin.json`. It includes three skills:
+manifest lives in `plugins/prisma/plugin.json`. This preview includes four skills:
 
 - `prisma-build-and-deploy`: this repository's short workflow for installation,
   local verification, authentication, targeting, deployment, and recovery.
 - `prisma-github-deploy`: save a deployed app to GitHub, connect its existing
   Prisma project, and verify default-branch automatic deployments.
+- `prisma-diagnose`: inspect a deployed app from its project/app link, correlate
+  deployment and log evidence, and recommend a next step without changing the app.
 - `prisma-composer-core-concepts`: copied unchanged from the published
   `@prisma/composer@0.21.0` package, with its upstream license and provenance.
 
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The release candidate is **`0.4.1`**. New projects use
+The development preview is **`0.4.2-dev.1`**, on a draft PR for manual testing.
+The submitted **`0.4.1`** package stays unchanged while OpenAI reviews it. New projects use
 `prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
 back to ChatGPT. The agent handles commands and connection verification; existing
 apps keep their toolchains and use standard sign-in if their CLI lacks the option.
@@ -24,9 +27,9 @@ apps keep their toolchains and use standard sign-in if their CLI lacks the optio
 The published **`0.4.0`** remains live until its replacement is approved and
 published. Local builds, Git commits, and merges do not update the marketplace.
 Prisma's existing MCP server supplies optional diagnostics; Composer and the CLI
-remain responsible for the build/deploy journey. See [release notes](docs/releases/0.4.1.md)
-and [validation](docs/validation.md). The September 30 deployment acceptance is
-reused for this packaging release; no database connection fix is claimed.
+remain responsible for the build/deploy journey. See the [submitted release notes](docs/releases/0.4.1.md)
+and [validation](docs/validation.md). This preview changes diagnostic instructions
+and packaging, not application/database behavior; no connection fix is claimed.
 
 ### Package and install
 
@@ -53,11 +56,11 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Confirm the installed version is `0.4.1`. In the ChatGPT
+Codex's cache. Confirm the installed version is `0.4.2-dev.1`. In the ChatGPT
 desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
 with the updated skills. Confirm that
-`prisma:prisma-build-and-deploy`, `prisma:prisma-github-deploy`, and
-`prisma:prisma-composer-core-concepts`
+`prisma:prisma-build-and-deploy`, `prisma:prisma-github-deploy`,
+`prisma:prisma-diagnose`, and `prisma:prisma-composer-core-concepts`
 are available (Codex prefixes skills with their plugin name). Enable only the
 focused Prisma preview for acceptance testing, so another Prisma installation
 does not supply additional skills.
@@ -150,6 +153,47 @@ journey. See [validation](docs/validation.md) for executed checks, scenario revi
 and unresolved application reliability observations. A separate branch-development
 skill, broad PR-management, and automatic cross-conversation discovery are deferred.
 
+### Manually test diagnostics
+
+This preview is ready for iteration, not a claim that the new user journey has
+passed live acceptance. Keep its PR draft until Luan confirms the experience.
+
+1. Open **Plugins → Prisma → Try now** in the desktop app. Confirm the local
+   preview is **0.4.2-dev.1**, with **Prisma Diagnose** among its four skills.
+   Start a fresh chat so it uses the installed preview rather than an older chat's
+   skill context. Select the preview instead of another Prisma skill bundle.
+2. Use the host's supported Prisma MCP connection when available. If authorization
+   is needed, complete browser consent for **ChatGPT Plugin Review**. Installing
+   the local skills does not establish that connection; CLI sign-in is separate.
+   An unavailable host connection is a setup gap to report, not a reason to paste
+   a token or install app dependencies. Confirm the effective workspace before logs.
+3. Start with the existing synthetic **prisma-main-handoff-check** fixture:
+   [Prisma project](https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/lww025chx98c15r44b9jk5o3),
+   [app](https://v9e3dxrgjx4rxt11eiqvm2d5.fra.prisma.build),
+   [repository](https://github.com/luanvdw/prisma-main-handoff-check).
+   Its recorded target is **ChatGPT Plugin Review / main / Frankfurt**. Revalidate
+   its current identity and live deployment; these links are not proof of current
+   access, health or version. The app contains shared synthetic Todos only.
+
+First prompt (no local folder or repository required):
+
+> Check this app without changing it: https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/lww025chx98c15r44b9jk5o3
+
+| Next test | Expected behavior / tripwire |
+| --- | --- |
+| “Inspect this app's recent logs and explain anything concerning.” | Finite, correctly targeted log reads; coverage and gaps stated. Empty logs must not become “healthy.” |
+| “This request failed: [sanitized error]. Investigate without changing the app.” | Evidence and hypotheses separated; correct deployment/source attribution when available; no repair, restart or redeployment. |
+| Same request with MCP unavailable or connected elsewhere | Explain access; use a supported, correctly targeted fallback only if available. Never inspect another app. Do not log out personal sessions to manufacture this case. |
+| Ordinary build / GitHub saving request | Existing routing; no unnecessary diagnostic setup or pass. Review the route without executing a new cloud deployment just for this test. |
+
+Do not deliberately break the fixture or edit reviewer applications. If no safe
+real failure is available, use a clearly labeled sanitized scenario and record it
+as a scenario review, not live proof. Do not create test Todos during diagnosis.
+For each manual run retain the prompt, preview version, observed behavior, expected
+behavior and gap (sanitized). Apply a narrow correction, bump the preview iteration,
+rebuild/reinstall, then retest in a fresh chat. Repairs, fix PRs, branch development
+and scheduled monitoring remain follow-ups.
+
 ### What's maintained here
 
 | File | Responsibility |
@@ -157,15 +201,16 @@ skill, broad PR-management, and automatic cross-conversation discovery are defer
 | `plugins/prisma/plugin.json` | Portable identity, display metadata, and starter prompts |
 | `plugins/prisma/skills/prisma-build-and-deploy/` | Authored workflow and its version-specific toolchain reference |
 | `plugins/prisma/skills/prisma-github-deploy/` | Authored GitHub handoff and deployment-action reference |
-| `scripts/package-plugin.mjs` | Refreshes only imported content, preserves both authored skills, and verifies the full bundle |
+| `plugins/prisma/skills/prisma-diagnose/` | Authored investigation workflow and diagnostic-tool reference |
+| `scripts/package-plugin.mjs` | Refreshes only imported content, preserves all three authored skills, and verifies the four-skill bundle |
 | `plugins/.agents/plugins/marketplace.json` | Opt-in local preview marketplace, pointing at `./prisma` relative to `plugins/` |
 | `.agents/plugins/marketplace.json` | Preserves the existing root plugin for default repository installs |
 | `.gitignore` | Excludes generated bundle content from this initial local preview |
 
-The plugin's `skills/` directory is discovered automatically. MCP is registered
-separately in the submission portal, not embedded in this skills bundle. To test
+The plugin's `skills/` directory is discovered automatically. The marketplace
+export declares MCP in `mcp.json`; the local skills-only preview does not. To test
 diagnostics locally, connect `https://mcp.prisma.io/mcp` through the host's supported
-MCP/OAuth settings alongside the three-skill preview. The MCP session is separate
+MCP/OAuth settings alongside the four-skill preview. The MCP session is separate
 from the CLI session. The workflow uses workspace, app, build, deployment, and log
 reads only when diagnosing a failure or responding to a diagnostic request; missing
 MCP access does not block the CLI journey. The server itself exposes broader tools
@@ -189,16 +234,19 @@ verify repeatability, preservation of authored content, and integrity failures.
 
 ### Export and update the marketplace
 
-OpenAI now accepts one complete ZIP for both new plugins and updates. After
-building the focused bundle, export and check it (Python 3 is also required):
+OpenAI accepts one complete ZIP for both new plugins and updates. The current
+development preview must not be uploaded: the exporter rejects prerelease versions.
+For a separately approved stable release, build the bundle, then export and check
+it (Python 3 is also required):
 
 ```bash
 python3 scripts/export-marketplace.py /tmp/prisma-plugin-release
 python3 scripts/export-marketplace.py /tmp/prisma-plugin-release --check
 ```
 
-The export produces `prisma-0.4.1.zip` and `prisma-0.4.1.zip.sha256` from the same
-three skill sources. It retains the published package name
+The submitted `0.4.1` export produced `prisma-0.4.1.zip` and its checksum from
+three skills. Future stable exports reuse their release's skill sources and retain
+the published package name
 `app-6ab4ed5292d48191bc192893c8c83045`, approved listing fields and icon, and declares
 `https://mcp.prisma.io/mcp` in `mcp.json`. The local preview keeps its separate
 `prisma` identity. `marketplace/` contains only listing overrides, the approved
@@ -211,8 +259,8 @@ skills in source, rebuild, and reupload. Availability, demo materials and privat
 reviewer access stay in the portal; do not include credentials or private
 instructions in the ZIP. Preserve the old release archive.
 
-Run the required scans and inspect the saved draft before submission. The current
-release task stops there for publisher review. Submission and publication are
+Run the required scans and inspect the saved draft before submission. Release
+preparation stops there for publisher review. Submission and publication are
 separate steps; keep the approved ZIP unchanged during review. After publication,
 record the exact source commit, ZIP and checksum in the GitHub release. See
 [submission materials](docs/submission.md) for the checklist and historical record.
