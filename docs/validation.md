@@ -1,5 +1,52 @@
 # Plugin validation
 
+## Diagnostics connection correction `0.4.2-dev.2` (2026-10-07)
+
+Luan's first manual run reached the public app but could not read runtime logs.
+The supplied conversation screenshot ends with a raw MCP URL and a request to
+connect or export logs. This is user-reported execution evidence, not an
+independently replayed diagnostic test. The prior preview packaged instructions
+without any registered MCP connection mapping; the generic discovery search also
+failed to return Prisma.
+
+The local preview now declares the existing registered Prisma connection in
+`.app.json`, with `extensions.com.openai.apps` pointing to it. This follows
+[OpenAI's local MCP testing guidance](https://developers.openai.com/plugins/build/plugins#create-and-test-a-plugin-locally-with-an-mcp-server).
+It is optional to preserve local building without MCP authorization. The stable
+marketplace exporter strips this preview reference and continues to declare the
+remote endpoint directly; it must not submit a self-dependency.
+
+The diagnostic skill now owns the connection handoff: resolve its known
+dependency when generic search is empty, provide a supported connection control
+or verified page, preserve the target/request, and continue after workspace
+verification. It does not default to a raw MCP URL, log export, or manual setup.
+
+Directly executed:
+
+- The host resolved `plugin_asdk_app_6ab4ed5292d48191bc192893c8c83045` as the
+  enabled, available Prisma plugin, initially not installed for the current account.
+  This corrected the incomplete result from generic plugin search.
+- The ChatGPT plugin directory showed Prisma and its MCP read tools. Its
+  **Install plugin** control opened Prisma's OAuth consent window requesting full
+  and offline access, with **ChatGPT Plugin Review** selected. Luan completed
+  consent. ChatGPT then displayed a connected primary account, and the host
+  dependency lookup reported Prisma installed and enabled with no unresolved apps.
+  The existing chat still exposed no Prisma MCP tools after authorization, so no
+  authenticated workspace or log read was executed. Account connection is verified;
+  the effective workspace and diagnostic access still need a fresh-chat check.
+- Packaging regression passes, including preservation/integrity of `.app.json`,
+  missing-input rejection, and exclusion of the local reference from stable
+  exports. Skill validation, relative links/anchors and whitespace checks pass.
+- Installed `0.4.2-dev.2` matches the 12-file bundle; four skills and three
+  references remain. Preview archive SHA-256:
+  `b28df76d37328a8beedc12d41d3129e230c47dd072184b8a7cd1e5521e18aaf4`.
+- Composer's hash and the submitted `0.4.1` archive hash remain unchanged from
+  the previous record. No portal, application, deployment, or upstream changes.
+
+Still pending: authenticated workspace/target checks, actual log retrieval,
+and a fresh-chat run proving the preview guides this flow.
+Keep PR #11 draft; installation alone is not an end-to-end pass.
+
 ## Diagnostics preview `0.4.2-dev.1` (2026-10-07)
 
 This draft adds a fourth skill, `prisma-diagnose`, for app-first inspection with

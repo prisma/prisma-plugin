@@ -28,9 +28,32 @@ documentation or repair stale mappings.
 ## MCP first
 
 The existing remote server is `https://mcp.prisma.io/mcp`. The marketplace package
-declares it; the local skills-only preview does not connect it automatically. Use
-the host's supported MCP/plugin connection and OAuth flow. MCP and CLI sessions
-are separate. Do not copy tokens or treat either session as proof of the other.
+declares it directly. The local preview's `.app.json` references the registered
+Prisma connection (`asdk_app_6ab4ed5292d48191bc192893c8c83045`); it does not create
+a new server or grant OAuth access. MCP and CLI sessions are separate. Do not copy
+tokens or treat either session as proof of the other.
+
+When tools are missing, inspect the declared dependency using the host's plugin
+management capabilities when available. The registered plugin reference is
+`plugin_asdk_app_6ab4ed5292d48191bc192893c8c83045`. Check this mapping if a generic
+"Prisma" search finds nothing; an empty search result is not proof the connection
+does not exist. Reuse an installed connection. For an unconnected one, surface
+the supported connection/install control, or verify and give the precise UI
+navigation if no direct control is available. Never invent a connection URL or
+tell a novice to configure an MCP server manually. If the host cannot provide a
+connection route, identify that specific limitation and the smallest next step.
+The verified [Prisma connection page](https://chatgpt.com/plugins/plugin_asdk_app_6ab4ed5292d48191bc192893c8c83045)
+offers **Install plugin** for an uninstalled connection and opens Prisma's browser
+authorization. Use it when the host has no in-chat connection control; it is not
+the publisher's submission portal.
+
+State that logs remain unchecked while authorization is pending. Keep the target
+and failed operation so the user does not need to repeat the request. After browser
+authorization, verify tool availability and the connected workspace, then continue
+the original investigation. If the host needs a fresh chat to load tools, explain
+that and give one ready-to-use continuation prompt with the target. Cancelled or
+denied consent preserves the partial findings; do not loop login attempts or ask
+for a log export as the default substitute for fixing the connection.
 
 Inspect the exposed tool schemas before use; host tool names may be namespaced.
 Use only the relevant reads, not every tool on every investigation:

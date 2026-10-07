@@ -18,7 +18,7 @@ manifest lives in `plugins/prisma/plugin.json`. This preview includes four skill
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The development preview is **`0.4.2-dev.1`**, on a draft PR for manual testing.
+The development preview is **`0.4.2-dev.2`**, on a draft PR for manual testing.
 The submitted **`0.4.1`** package stays unchanged while OpenAI reviews it. New projects use
 `prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
 back to ChatGPT. The agent handles commands and connection verification; existing
@@ -56,7 +56,7 @@ codex plugin list --marketplace prisma-preview --json
 ```
 
 This registers the local `prisma-preview` marketplace and installs its Prisma plugin into
-Codex's cache. Confirm the installed version is `0.4.2-dev.1`. In the ChatGPT
+Codex's cache. Confirm the installed version is `0.4.2-dev.2`. In the ChatGPT
 desktop app, open **Plugins → Prisma → Try now** to start a fresh conversation
 with the updated skills. Confirm that
 `prisma:prisma-build-and-deploy`, `prisma:prisma-github-deploy`,
@@ -159,14 +159,15 @@ This preview is ready for iteration, not a claim that the new user journey has
 passed live acceptance. Keep its PR draft until Luan confirms the experience.
 
 1. Open **Plugins → Prisma → Try now** in the desktop app. Confirm the local
-   preview is **0.4.2-dev.1**, with **Prisma Diagnose** among its four skills.
+   preview is **0.4.2-dev.2**, with **Prisma Diagnose** among its four skills.
    Start a fresh chat so it uses the installed preview rather than an older chat's
    skill context. Select the preview instead of another Prisma skill bundle.
-2. Use the host's supported Prisma MCP connection when available. If authorization
-   is needed, complete browser consent for **ChatGPT Plugin Review**. Installing
-   the local skills does not establish that connection; CLI sign-in is separate.
-   An unavailable host connection is a setup gap to report, not a reason to paste
-   a token or install app dependencies. Confirm the effective workspace before logs.
+2. The preview references Prisma's existing registered connection. When prompted,
+   connect Prisma and complete browser consent for **ChatGPT Plugin Review**.
+   CLI sign-in is separate. The agent should guide this step and continue the
+   original check after verifying access, not leave you with a raw server URL or
+   ask for exported logs. No token copying or app dependencies are needed.
+   If the connection control is unavailable, record that precise host limitation.
 3. Start with the existing synthetic **prisma-main-handoff-check** fixture:
    [Prisma project](https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/lww025chx98c15r44b9jk5o3),
    [app](https://v9e3dxrgjx4rxt11eiqvm2d5.fra.prisma.build),
@@ -199,6 +200,7 @@ and scheduled monitoring remain follow-ups.
 | File | Responsibility |
 | --- | --- |
 | `plugins/prisma/plugin.json` | Portable identity, display metadata, and starter prompts |
+| `plugins/prisma/.app.json` | Local preview's optional reference to the existing registered Prisma MCP connection |
 | `plugins/prisma/skills/prisma-build-and-deploy/` | Authored workflow and its version-specific toolchain reference |
 | `plugins/prisma/skills/prisma-github-deploy/` | Authored GitHub handoff and deployment-action reference |
 | `plugins/prisma/skills/prisma-diagnose/` | Authored investigation workflow and diagnostic-tool reference |
@@ -207,11 +209,15 @@ and scheduled monitoring remain follow-ups.
 | `.agents/plugins/marketplace.json` | Preserves the existing root plugin for default repository installs |
 | `.gitignore` | Excludes generated bundle content from this initial local preview |
 
-The plugin's `skills/` directory is discovered automatically. The marketplace
-export declares MCP in `mcp.json`; the local skills-only preview does not. To test
-diagnostics locally, connect `https://mcp.prisma.io/mcp` through the host's supported
-MCP/OAuth settings alongside the four-skill preview. The MCP session is separate
-from the CLI session. The workflow uses workspace, app, build, deployment, and log
+The plugin's `skills/` directory is discovered automatically. The local preview
+declares the existing registered Prisma connection in `.app.json`, using the
+[documented local MCP mapping](https://developers.openai.com/plugins/build/plugins#create-and-test-a-plugin-locally-with-an-mcp-server).
+It is optional so local building does not require MCP authorization. Connection
+and browser consent still need to complete before authenticated diagnostics.
+The marketplace exporter removes this local reference and declares the same
+remote endpoint directly in `mcp.json`; it does not submit a dependency on itself.
+The MCP session is separate from the CLI session. The workflow uses workspace,
+app, build, deployment, and log
 reads only when diagnosing a failure or responding to a diagnostic request; missing
 MCP access does not block the CLI journey. The server itself exposes broader tools
 and permissions; workflow guidance does not restrict server access.

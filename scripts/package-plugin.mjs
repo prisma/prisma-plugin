@@ -60,6 +60,7 @@ async function check() {
 
 async function build() {
   // Authored files are required inputs, never generated or replaced by the packager.
+  await readFile(join(output, '.app.json'));
   for (const [name, reference] of Object.entries(authoredSkills)) {
     await readFile(join(output, 'skills', name, 'SKILL.md'));
     await readFile(join(output, 'skills', name, reference));
@@ -98,6 +99,7 @@ async function build() {
     await cp(join(upstream, 'LICENSE'), join(staged, 'LICENSE'));
     await cp(join(root, 'assets/prisma-icon.svg'), join(staged, 'assets/prisma-icon.svg'));
     await cp(join(output, 'plugin.json'), join(staged, 'plugin.json'));
+    await cp(join(output, '.app.json'), join(staged, '.app.json'));
     await writeFile(join(staged, 'upstream.json'), json({
       source,
       skill,

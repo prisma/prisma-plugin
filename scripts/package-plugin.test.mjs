@@ -16,6 +16,7 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
   try {
     for (const relative of [
       'scripts/package-plugin.mjs', 'scripts/export-marketplace.py', 'plugins/prisma/plugin.json',
+      'plugins/prisma/.app.json',
       'assets/prisma-icon.svg', 'marketplace', 'docs/releases', workflow, github, diagnostics,
     ]) {
       await mkdir(dirname(join(temporary, relative)), { recursive: true });
@@ -30,6 +31,7 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
     const authored = await readFile(skillPath);
     const reference = await readFile(referencePath);
     const additionalFiles = [
+      join(temporary, 'plugins/prisma/.app.json'),
       join(temporary, github, 'SKILL.md'), join(temporary, github, 'references/github-deploy.md'),
       join(temporary, diagnostics, 'SKILL.md'), join(temporary, diagnostics, 'references/diagnostics.md'),
     ];
@@ -40,6 +42,11 @@ test('packaging preserves authored files and verifies the complete bundle', asyn
 
     pass(run());
     pass(run('--check'));
+    const previewManifest = JSON.parse(await readFile(join(temporary, 'plugins/prisma/plugin.json'), 'utf8'));
+    assert.equal(previewManifest.extensions['com.openai'].apps, './.app.json');
+    assert.deepEqual(JSON.parse(await readFile(join(temporary, 'plugins/prisma/.app.json'), 'utf8')), {
+      apps: { prisma: { id: 'asdk_app_6ab4ed5292d48191bc192893c8c83045', optional: true } },
+    });
     assert.deepEqual((await readdir(join(temporary, 'plugins/prisma/skills'))).sort(), [
       'prisma-build-and-deploy', 'prisma-composer-core-concepts', 'prisma-diagnose', 'prisma-github-deploy',
     ]);
@@ -113,6 +120,7 @@ with zipfile.ZipFile(archive_path) as archive:
     config = json.loads(archive.read('mcp.json'))
     assert config['mcpServers'] == {'prisma': {'type': 'streamable-http', 'url': 'https://mcp.prisma.io/mcp'}}
     extension = manifest['extensions']['com.openai']
+    assert 'apps' not in extension, 'Public exports must not retain the preview connection reference.'
     assert 'countries' not in extension['publication']
     assert 'demo_recording_url' not in extension['review']
     assert len(extension['review']['test_cases']['positive']) == 5
@@ -128,7 +136,7 @@ with zipfile.ZipFile(archive_path) as archive:
     await writeFile(skillPath, Buffer.concat([authored, Buffer.from('\nmodified\n')]));
     assert.notEqual(exportRun().status, 0, 'Stale skill content must fail export.');
     await writeFile(skillPath, authored);
-    manifest.version = '0.4.2-dev.1';
+    manifest.version = '0.4.2-dev.2';
     await writeFile(manifestPath, JSON.stringify(manifest));
     pass(run());
     assert.notEqual(exportRun().status, 0, 'Development previews must not be exported for publication.');
