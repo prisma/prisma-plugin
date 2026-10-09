@@ -18,7 +18,8 @@ manifest lives in `plugins/prisma/plugin.json`. This preview includes four skill
 The workflow reads the Composer reference for API concepts. Composer remains the
 source of truth for those concepts; this repository owns completing the journey.
 
-The development preview is **`0.4.2-dev.2`**, on a draft PR for manual testing.
+The development preview is **`0.4.2-dev.2`**. Luan accepted the fresh-chat
+diagnostics experience on October 9.
 The submitted **`0.4.1`** package stays unchanged while OpenAI reviews it. New projects use
 `prisma@8.0.0-rc.17` and plugin-specific browser sign-in guidance that directs users
 back to ChatGPT. The agent handles commands and connection verification; existing
@@ -155,8 +156,11 @@ skill, broad PR-management, and automatic cross-conversation discovery are defer
 
 ### Manually test diagnostics
 
-This preview is ready for iteration, not a claim that the new user journey has
-passed live acceptance. Keep its PR draft until Luan confirms the experience.
+The fresh-chat log investigation below passed Luan's manual acceptance on October
+9. The response identified the deliberate errors and disclosed its coverage gaps;
+it did not independently confirm which deployment served the live endpoint.
+See [validation](docs/validation.md) for the separate CLI/MCP retrieval proof and
+the routing/failure cases reviewed as scenarios rather than executed conversations.
 
 1. Open **Plugins → Prisma → Try now** in the desktop app. Confirm the local
    preview is **0.4.2-dev.2**, with **Prisma Diagnose** among its four skills.
@@ -167,18 +171,26 @@ passed live acceptance. Keep its PR draft until Luan confirms the experience.
    CLI sign-in is separate. The agent should guide this step and continue the
    original check after verifying access, not leave you with a raw server URL or
    ask for exported logs. No token copying or app dependencies are needed.
+   With multiple saved Prisma connections, select the account authorized for this
+   workspace before repeating OAuth. A connected account for another workspace
+   does not grant access to this fixture.
    If the connection control is unavailable, record that precise host limitation.
-3. Start with the existing synthetic **prisma-main-handoff-check** fixture:
-   [Prisma project](https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/lww025chx98c15r44b9jk5o3),
-   [app](https://v9e3dxrgjx4rxt11eiqvm2d5.fra.prisma.build),
-   [repository](https://github.com/luanvdw/prisma-main-handoff-check).
+3. Use the disposable **prisma-diagnostics-log-check** fixture:
+   [Console app](https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/l3he332k8zxo2fw97u2nppfx/compute/ynxlcsefv8imj5c6fd3mg305?branch=br_xcp9jpbhbyqdcfteeqzo8gp4),
+   [live app](https://ynxlcsefv8imj5c6fd3mg305.fra.prisma.build).
    Its recorded target is **ChatGPT Plugin Review / main / Frankfurt**. Revalidate
    its current identity and live deployment; these links are not proof of current
-   access, health or version. The app contains shared synthetic Todos only.
+   access, health or version. It contains no database or customer data. If a fresh
+   log marker is needed, the tester can click **Generate test error** and retain
+   the marker before starting diagnosis. The diagnostics agent must not press it.
 
 First prompt (no local folder or repository required):
 
-> Check this app without changing it: https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/lww025chx98c15r44b9jk5o3
+> Check this app for errors and explain what needs fixing. Don't change anything: https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/l3he332k8zxo2fw97u2nppfx/compute/ynxlcsefv8imj5c6fd3mg305?branch=br_xcp9jpbhbyqdcfteeqzo8gp4
+
+Expected: identify the intentional handled test errors, cite the relevant sample,
+state any unverified live-routing identity, and recommend no repair to the test
+fixture. Do not require source code or alter the app.
 
 | Next test | Expected behavior / tripwire |
 | --- | --- |
