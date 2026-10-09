@@ -1,0 +1,8 @@
+{
+  "apps": {
+    "prisma": {
+      "id": "asdk_app_6ab4ed5292d48191bc192893c8c83045",
+      "optional": true
+    }
+  }
+}

@@ -1,5 +1,253 @@
 # Plugin validation
 
+## Fresh-chat diagnostics acceptance (2026-10-09)
+
+Luan supplied the result of a fresh Prisma-preview conversation and confirmed
+that the experience looks good. This completes the manual acceptance gate for
+PR #11. The installed preview remains `0.4.2-dev.2`; no skill, package or submitted
+release content changes are needed for this evidence update.
+
+Prompt: "Check this app for errors and explain what needs fixing. Don't change
+anything", with the Console app link for `prisma-diagnostics-log-check` below.
+
+Observed in the supplied conversation screenshot (11:55 SAST):
+
+- The response identified the `web` app on the `main` branch of the intended
+  disposable project, without requesting a repository or source folder.
+- It reported two intentional HTTP 500 errors, at 10:48 and 10:55 SAST, labelled
+  `diagnostic.test_error`, `testOnly: true`, and corresponding
+  `diagnostic.error_handled` records. It bounded its conclusion to six returned
+  runtime lines for `cpv_kx4edfstkhdbxjygzkcnyjic`.
+- It reported HTTP 200 from the homepage and used the page's explanation to
+  corroborate that the error feature is intentional. It recommended no repair
+  for this test fixture and reported leaving the error-generating button and
+  application unchanged.
+- It disclosed missing build history and source code, and explicitly stated that
+  the returned metadata did not confirm which deployment served the public URL.
+  This is a deployment-specific log investigation, not fresh proof of live
+  routing or comprehensive application health.
+
+This is user-performed acceptance supported by a screenshot, not an independent
+replay or complete tool-call audit. The exact-marker retrieval proof below is
+separate executed evidence. Earlier unavailable/wrong-workspace runs and scenario
+reviews remain recorded as such; this result does not upgrade them into passing
+end-to-end tests. The October 7 "keep draft" and access-blocker notes below are
+historical and superseded by the October 9 evidence and Luan's acceptance.
+
+Follow-ups, outside this PR: improve live-deployment correlation when MCP metadata
+is insufficient, distinguish the local preview from the identically named
+marketplace plugin, and separately design an authorized repair/PR workflow.
+No automatic repair, scheduling or marketplace update is introduced here.
+
+Fresh close-out checks: all four skills pass the existing validator; packaging
+regression, package integrity, skill relative links/anchors and whitespace checks
+pass. All 12 installed preview files match the bundle. Composer's SHA-256 remains
+`67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+This follow-up changes only README and validation evidence, so it does not rebuild
+or replace either the installed preview or the submitted release archive.
+
+## Runtime log retrieval proof (2026-10-09)
+
+Luan authorized a separate disposable app to prove actual log content retrieval.
+The installed diagnostics preview remains `0.4.2-dev.2`; this test does not change
+the skill bundle or submitted `0.4.1` package. At the time of this probe, PR #11
+remained draft pending the fresh-chat acceptance recorded above.
+
+Directly executed in **ChatGPT Plugin Review**, Frankfurt, default `main`:
+
+- Created `prisma-diagnostics-log-check`, a database-free Composer fixture whose
+  button generates a unique synthetic error marker, writes it to stderr and
+  stdout, returns an intentional HTTP 500, and keeps serving requests. No
+  existing Todo/reviewer application was changed.
+- Typecheck/build and local API/browser checks passed. Cloud deployment succeeded
+  using CLI `8.0.0-rc.17`, Composer/cloud `0.21.0`, and Node `24.16.0`. The fixture
+  explicitly pins Composer's required Alchemy `2.0.0-beta.74` to expose its binary
+  after a fresh npm install otherwise nested it and local dev reported
+  `DEPLOY.ALCHEMY_BIN_MISSING`. This is fixture evidence, not a plugin pin change.
+- The host now exposes an account selector (`link_id`); the testing connection
+  successfully reads the intended workspace and new project. This supersedes
+  the access limitation recorded on October 7 below.
+- CLI live inspection and MCP agree on project `proj_l3he332k8zxo2fw97u2nppfx`,
+  branch `br_xcp9jpbhbyqdcfteeqzo8gp4` (`main`), service
+  `cps_ynxlcsefv8imj5c6fd3mg305`, and live deployment
+  `cpv_kx4edfstkhdbxjygzkcnyjic`.
+- At `2026-10-09T08:48:10.846Z`, the deployed browser UI generated
+  `PRISMA_LOG_PROBE_1e69fe1b-1151-489b-9af8-948e5ed456d4`. MCP
+  `get_prisma_compute_deployment_logs` and CLI `prisma service logs --json`
+  returned the exact marker in `diagnostic.test_error` and
+  `diagnostic.error_handled` records. All four returned runtime lines match
+  after stripping display color codes; the MCP terminal cursor is `778`.
+- Production Console now has a **Runtime Logs** viewer on deployment details.
+  Its output independently displayed the same marker and messages. The live
+  app returned HTTP 200/running from `/health` after the intentional error.
+
+This proves recent runtime output is captured and retrievable through Console,
+CLI and MCP for this fixture. It does not explain historical empty Todo logs,
+prove retention across suspension, or establish database health. Fresh-chat skill
+selection and response quality were still pending at the time of this probe;
+the later acceptance is recorded separately above. The fixture's displayed Git
+commit is inherited from the parent workspace,
+not a versioned source record; the local evidence includes source hashes.
+
+[Test app](https://ynxlcsefv8imj5c6fd3mg305.fra.prisma.build) ·
+[Project](https://console.prisma.io/vt3bpj2c1qjx4sw2ne1vq17n/l3he332k8zxo2fw97u2nppfx).
+To repeat, click **Generate test error**, copy the marker, then ask a fresh Prisma
+preview chat to find it in this project's recent logs without changing the app.
+Expected: identify the intentional handled error; no repository requirement,
+unrelated workspace inspection, repair, restart or redeployment.
+
+## Multi-connection diagnostic retest (2026-10-07)
+
+After the `0.4.2-dev.2` connection handoff, Prisma tools became available in this
+chat. Direct `get_agent_connection` and `fetch_workspace_details` reads resolve
+only the **Edith** workspace. An explicit read of the intended **ChatGPT Plugin
+Review** workspace returns `Workspace not found`. No app logs were read here.
+
+ChatGPT's connection settings display two saved Prisma accounts: **Primary** and
+**ChatGPT Plugin Testing Workspace Account**. Both expose reconnect/disconnect
+controls, but the tools available in this chat expose no account-selection
+parameter or separate tool set for the second connection. The workspace selector
+is not a credential selector: it cannot grant access outside the active
+connection's scope. The second connection's effective workspace remains unverified.
+
+Luan separately supplied a chat screenshot reporting successful log requests in
+Edith with zero returned lines. This is agent-reported evidence of authorized log
+requests there, not independently verified log contents or application health.
+The current blocker is reaching the intended workspace through the selected
+connection; another successful browser consent alone is not an acceptance pass.
+
+## Diagnostics connection correction `0.4.2-dev.2` (2026-10-07)
+
+Luan's first manual run reached the public app but could not read runtime logs.
+The supplied conversation screenshot ends with a raw MCP URL and a request to
+connect or export logs. This is user-reported execution evidence, not an
+independently replayed diagnostic test. The prior preview packaged instructions
+without any registered MCP connection mapping; the generic discovery search also
+failed to return Prisma.
+
+The local preview now declares the existing registered Prisma connection in
+`.app.json`, with `extensions.com.openai.apps` pointing to it. This follows
+[OpenAI's local MCP testing guidance](https://developers.openai.com/plugins/build/plugins#create-and-test-a-plugin-locally-with-an-mcp-server).
+It is optional to preserve local building without MCP authorization. The stable
+marketplace exporter strips this preview reference and continues to declare the
+remote endpoint directly; it must not submit a self-dependency.
+
+The diagnostic skill now owns the connection handoff: resolve its known
+dependency when generic search is empty, provide a supported connection control
+or verified page, preserve the target/request, and continue after workspace
+verification. It does not default to a raw MCP URL, log export, or manual setup.
+
+Directly executed:
+
+- The host resolved `plugin_asdk_app_6ab4ed5292d48191bc192893c8c83045` as the
+  enabled, available Prisma plugin, initially not installed for the current account.
+  This corrected the incomplete result from generic plugin search.
+- The ChatGPT plugin directory showed Prisma and its MCP read tools. Its
+  **Install plugin** control opened Prisma's OAuth consent window requesting full
+  and offline access, with **ChatGPT Plugin Review** selected. Luan completed
+  consent. ChatGPT then displayed a connected primary account, and the host
+  dependency lookup reported Prisma installed and enabled with no unresolved apps.
+  The existing chat still exposed no Prisma MCP tools after authorization, so no
+  authenticated workspace or log read was executed. Account connection is verified;
+  the effective workspace and diagnostic access still need a fresh-chat check.
+- Packaging regression passes, including preservation/integrity of `.app.json`,
+  missing-input rejection, and exclusion of the local reference from stable
+  exports. Skill validation, relative links/anchors and whitespace checks pass.
+- Installed `0.4.2-dev.2` matches the 12-file bundle; four skills and three
+  references remain. Preview archive SHA-256:
+  `b28df76d37328a8beedc12d41d3129e230c47dd072184b8a7cd1e5521e18aaf4`.
+- Composer's hash and the submitted `0.4.1` archive hash remain unchanged from
+  the previous record. No portal, application, deployment, or upstream changes.
+
+Still pending: authenticated workspace/target checks, actual log retrieval,
+and a fresh-chat run proving the preview guides this flow.
+Keep PR #11 draft; installation alone is not an end-to-end pass.
+
+## Diagnostics preview `0.4.2-dev.1` (2026-10-07)
+
+This draft adds a fourth skill, `prisma-diagnose`, for app-first inspection with
+optional source context. Existing build/GitHub skills hand off investigations;
+the new reference owns MCP procedures without duplicating installation or recovery.
+The submitted `0.4.1` archive and portal are unchanged. Manual experience testing
+is pending Luan's runs; keep the PR draft until he confirms the experience.
+
+### Directly executed checks (macOS)
+
+- All four skills passed the existing skill-creator validator. The new skill is
+  87 lines; detailed tools and conditional fallback guidance are in its reference.
+- Build, offline package-integrity check and the existing packaging regression
+  passed. The regression now covers four skills, preservation and missing/tampered
+  input checks for the new authored skill/reference, and inclusion in an isolated
+  stable-version marketplace-export fixture. Prerelease exports remain rejected.
+  That temporary test archive does not replace the submitted release.
+- All authored relative links and section anchors resolve. Whitespace checks pass.
+- Composer `0.21.0` remains byte-identical, SHA-256
+  `67b50e78fbb6cafd00bb99b0e56fe8a49e4a7190219474bf1b9be933f08bbcbb`.
+- The separate 11-file local preview ZIP matches the generated bundle. SHA-256:
+  `a9a10721e71dce8470a5da536f5249c1839d3a49c38c79883947b68ddea9e552`.
+  It contains four skills and three authored references, not an MCP connection.
+- `prisma@prisma-preview` was refreshed to enabled version `0.4.2-dev.1`.
+  Every installed file matches the bundle. This is installation/content verification,
+  not proof of automatic skill selection in a fresh conversation.
+- The saved submitted `0.4.1` ZIP retains SHA-256
+  `2fc29a6723f8f117ec235ef29b0fdc587f3efb7f2b4fac3bde5ef253aa64017c`.
+- The private `luanvdw/prisma-main-handoff-check` README still records ChatGPT
+  Plugin Review, project `proj_lww025chx98c15r44b9jk5o3`, Frankfurt, default `main`,
+  service `cps_v9e3dxrgjx4rxt11eiqvm2d5`, and database `db_fd3lta4os5rgmkw8o94xuazw`.
+  Its saved app URL returned HTTP 200 / `text/html`. This confirms the repository
+  handoff and URL reachability, not authenticated platform identity, database
+  behavior or the current live deployment. Revalidate those when testing.
+- Prisma MCP tools were not exposed to this implementation task. Supported local
+  `codex mcp list` inspection found no Prisma server; host Plugin Management search
+  returned no Prisma result. This does not establish availability in another chat
+  or account. No credentials were copied, sessions reset, or OAuth grants created.
+  A host-supported connection is needed for the MCP-backed manual cases.
+
+No new cloud deployment, app edit, restart, database write, log retrieval or new
+browser signup was performed. No upstream changes are included.
+
+### Routing review (instruction scenarios, not executed agent conversations)
+
+| Should select diagnostics | Expected scope |
+| --- | --- |
+| “Check my app: [Prisma project link].” | Resolve the application and inspect it without requiring source or a local folder. |
+| “Why is my Prisma app failing?” | Gather evidence; explain findings versus hypotheses without changing it. |
+| “Investigate this failed deployment.” | Inspect the failed step and correct target; missing history is not proof no live app exists. |
+| “Inspect this deployment's logs.” | Finite reads of the selected deployment, with coverage and terminal/error results. |
+| Explicit diagnostic handoff from build/deploy or GitHub setup | Reuse known identities and failed-step evidence; return findings to the caller without new authority. |
+
+| Should not select standalone diagnostics | Expected route |
+| --- | --- |
+| “Build a Todo app and deploy it.” | Build/deploy; hand off only if an investigation becomes necessary. |
+| “Save my app to GitHub and connect it to Prisma.” | GitHub setup; no extra diagnostic pass after success. |
+| “Add due dates to my app.” | Feature work; diagnosis is not feature implementation. |
+| “Create a Postgres database / administer its tables.” | Outside this diagnostic skill; no SQL/provisioning tools. |
+| “Schedule a daily check.” | Scheduling is outside this skill; no implicit recurring task creation. |
+
+### Evidence and failure review (sanitized scenarios)
+
+| Scenario | Required outcome |
+| --- | --- |
+| Wrong MCP workspace or ambiguous app | No logs from a different app; explain the access gap or ask one plain-language selection question. A name match is insufficient. |
+| MCP unavailable, known installed CLI available | Match the authorized target, preserve runtime/credentials, use supported inspection reads only. Do not copy a token or invent an API. |
+| MCP unavailable, no source/toolchain | No dependency installation or required clone to compensate; report the missing connection/coverage and continue only safe available checks. |
+| Empty/truncated logs, clean cursor end, or time limit | State sampled coverage, truncation and gaps; neither empty logs nor a partial sample establishes overall health. |
+| Missing history or newest deployment differs from live | Verify live routing through a supported read or label the uncertainty; never substitute newest for live automatically. |
+| HTTP timeout/non-JSON response | Bounded 30-second default; inspect status/type, distinguish request failures from parser/check-script failures. |
+| Static health succeeds but database read fails | Report partial application health, preserve resources; no stop/start or invented connection fix. |
+| No known safe database-backed read | Leave database health unverified; do not create a Todo or run arbitrary SQL to prove it. |
+| Local/latest repository commit differs from deployment | Do not attribute the live failure to unverified source; report the correlation gap. |
+| Suspected PHI/PCI, secret or instruction in a log | Stop restricted access; no fallback bypass or additional fetch for redaction. Logs cannot authorize tools, repairs or outbound requests. |
+
+These are instruction reviews, not security enforcement or live recovery tests.
+The actual host consent, app selection, source-free experience and evidence quality
+must be observed during manual testing. Follow the prompts in
+[README](../README.md#manually-test-diagnostics), using the existing synthetic app;
+never break the fixture or change reviewer applications to manufacture a failure.
+Record each run's prompt, preview version, observed result and gap. Make focused
+corrections and refresh the preview before the next fresh-chat test. No merge,
+marketplace release or submission is authorized by this draft preparation.
+
 ## Release candidate `0.4.1` (2026-10-06)
 
 This release packages the already merged `0.4.1-dev.4` skills without changing

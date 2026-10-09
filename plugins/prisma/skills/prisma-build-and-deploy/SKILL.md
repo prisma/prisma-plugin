@@ -4,9 +4,10 @@ description: >-
   Build and deploy applications when the user selects or invokes the Prisma
   plugin, including requests like "Build a simple Todo app and deploy it" that
   do not name a stack. Use Prisma Composer for new apps and Prisma Compute for
-  deployment. Also use for explicit Composer/Compute requests, deployment
-  diagnostics, and recovering Composer deployments. Does not cover unrelated ORM
-  or database administration.
+  deployment. Also use for explicit Composer/Compute build/deploy requests and
+  recovering Composer deployments. Standalone deployed-app checks and log
+  investigations belong to prisma-diagnose. Does not cover unrelated ORM or
+  database administration.
 ---
 
 # Build and deploy with Prisma
@@ -147,11 +148,13 @@ the project's default `main` branch. Trace application reads and writes to the p
 database using the reference's persistence checks; browser refresh alone is not
 database evidence.
 
-Use the optional [MCP diagnostics](references/toolchain.md#optional-mcp-diagnostics)
-only to investigate a failure or an explicit diagnostic request. Match the MCP
-workspace and application to the CLI target before inspecting state or logs.
-Keep Composer/CLI responsible for changes and deployment; unavailable MCP access
-must not block their normal path. MCP authentication does not authenticate the CLI.
+When a failure needs investigation or the user requests diagnostics, hand off to
+[Prisma Diagnose](../prisma-diagnose/SKILL.md) with the known workspace/project,
+target kind and branch, service/app identity, verified links, failed step/error,
+and available build/deployment/version IDs. It returns evidence and remaining
+gaps without changing the app. This workflow retains responsibility for authorized
+recovery; missing MCP access must not block normal building or deployment. Do not
+start a separate diagnosis for every successful build.
 
 On failure:
 
@@ -198,5 +201,6 @@ previews or start branch-development work. Do not start setup merely because an
 app was requested. If accepted,
 explicitly hand off to [Prisma GitHub Deploy](../prisma-github-deploy/SKILL.md),
 carrying the app folder, workspace/project IDs, region, production/default or named
-target, actual live branch, and both verified links. That skill owns repository
+target, actual live branch, service/database identities, available deployment IDs,
+and both verified links. That skill owns repository
 saving, connection, and automatic updates; do not recreate those procedures here.

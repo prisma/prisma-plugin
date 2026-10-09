@@ -28,6 +28,9 @@ def package_files():
     metadata = json.loads((MARKETPLACE / "metadata.json").read_text())
     manifest["name"] = metadata["name"]
     openai = manifest["extensions"]["com.openai"]
+    # Local previews reuse the registered Prisma connection. Public submissions
+    # declare the remote MCP server directly instead of depending on themselves.
+    openai.pop("apps", None)
     openai["interface"].update(metadata["interface"])
     openai["review"] = {
         "test_cases": json.loads((MARKETPLACE / "review-cases.json").read_text()),
